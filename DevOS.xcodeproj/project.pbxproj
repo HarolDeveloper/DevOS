@@ -12,6 +12,7 @@
 		A2F0A5572DBC293400D53638 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5562DBC293400D53638 /* Item.swift */; };
 		A2F0A5592DBC293500D53638 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A5582DBC293500D53638 /* Assets.xcassets */; };
 		A2F0A55C2DBC293500D53638 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */; };
+		EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB0B8BD2DC16AF200DF567B /* LoginView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		A2F0A5562DBC293400D53638 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		A2F0A5582DBC293500D53638 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		EAB0B8BD2DC16AF200DF567B /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 			children = (
 				A2F0A5522DBC293400D53638 /* DevOSApp.swift */,
 				A2F0A5542DBC293400D53638 /* ContentView.swift */,
+				EAB0B8BD2DC16AF200DF567B /* LoginView.swift */,
 				A2F0A5562DBC293400D53638 /* Item.swift */,
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
@@ -142,6 +145,7 @@
 			files = (
 				A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */,
 				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
+				EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */,
 				A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
