@@ -9,10 +9,12 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Spacer()
+            Text("Home View")
+                .font(.title)
+                .foregroundColor(.gray)
+            Spacer()
+        }
     }
-}
-
-#Preview {
-    HomeView()
 }

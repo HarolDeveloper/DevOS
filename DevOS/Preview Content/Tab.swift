@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+enum Tab {
+    case camera, home, map
+}

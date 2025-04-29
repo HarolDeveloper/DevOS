@@ -19,6 +19,11 @@
 		A2F0A5572DBC293400D53638 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5562DBC293400D53638 /* Item.swift */; };
 		A2F0A5592DBC293500D53638 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A5582DBC293500D53638 /* Assets.xcassets */; };
 		A2F0A55C2DBC293500D53638 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */; };
+		F69370102DC16715006494B6 /* NavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F693700F2DC16715006494B6 /* NavBarView.swift */; };
+		F69370142DC16C96006494B6 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69370132DC16C96006494B6 /* CameraView.swift */; };
+		F69370162DC16CA4006494B6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69370152DC16CA4006494B6 /* HomeView.swift */; };
+		F69370182DC16CAD006494B6 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69370172DC16CAD006494B6 /* MapView.swift */; };
+		F693701A2DC16F84006494B6 /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69370192DC16F84006494B6 /* Tab.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +40,11 @@
 		A2F0A5562DBC293400D53638 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		A2F0A5582DBC293500D53638 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F693700F2DC16715006494B6 /* NavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarView.swift; sourceTree = "<group>"; };
+		F69370132DC16C96006494B6 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		F69370152DC16CA4006494B6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F69370172DC16CAD006494B6 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		F69370192DC16F84006494B6 /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +121,11 @@
 			isa = PBXGroup;
 			children = (
 				A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */,
+				F693700F2DC16715006494B6 /* NavBarView.swift */,
+				F69370192DC16F84006494B6 /* Tab.swift */,
+				F69370152DC16CA4006494B6 /* HomeView.swift */,
+				F69370172DC16CAD006494B6 /* MapView.swift */,
+				F69370132DC16C96006494B6 /* CameraView.swift */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -185,11 +200,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F69370102DC16715006494B6 /* NavBarView.swift in Sources */,
+				F69370182DC16CAD006494B6 /* MapView.swift in Sources */,
+				F69370162DC16CA4006494B6 /* HomeView.swift in Sources */,
+				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
+				F69370142DC16C96006494B6 /* CameraView.swift in Sources */,
+				F693701A2DC16F84006494B6 /* Tab.swift in Sources */,
 				A237A1172DC170D600B18607 /* User.swift in Sources */,
 				A237A1222DC1747600B18607 /* MainView.swift in Sources */,
 				A237A11E2DC171BC00B18607 /* APIService.swift in Sources */,
 				A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */,
-				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
 				A237A11C2DC171AD00B18607 /* AuthService.swift in Sources */,
 				A237A1272DC1792800B18607 /* UserService.swift in Sources */,
 				A237A1192DC1711300B18607 /* AuthResponse.swift in Sources */,
