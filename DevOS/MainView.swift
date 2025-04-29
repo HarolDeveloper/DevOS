@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct MainView: View {
+    @Environment(\.modelContext) private var modelContext
     @StateObject var authViewModel = AuthViewModel()
     
     var body: some View {
         Group {
             if authViewModel.isAuthenticated {
-              
+              NavBarView()
             } else {
-              
+              NavBarView()
             }
         }
         .environmentObject(authViewModel)
@@ -23,5 +24,5 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView()
+    MainView().modelContainer(for: [], inMemory: true)
 }

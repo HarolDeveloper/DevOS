@@ -15,8 +15,6 @@
 		A237A1252DC174B500B18607 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1242DC174B500B18607 /* AuthViewModel.swift */; };
 		A237A1272DC1792800B18607 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1262DC1792800B18607 /* UserService.swift */; };
 		A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5522DBC293400D53638 /* DevOSApp.swift */; };
-		A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5542DBC293400D53638 /* ContentView.swift */; };
-		A2F0A5572DBC293400D53638 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5562DBC293400D53638 /* Item.swift */; };
 		A2F0A5592DBC293500D53638 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A5582DBC293500D53638 /* Assets.xcassets */; };
 		A2F0A55C2DBC293500D53638 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */; };
 		F69370102DC16715006494B6 /* NavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F693700F2DC16715006494B6 /* NavBarView.swift */; };
@@ -36,8 +34,6 @@
 		A237A1262DC1792800B18607 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		A2F0A54F2DBC293400D53638 /* DevOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2F0A5522DBC293400D53638 /* DevOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevOSApp.swift; sourceTree = "<group>"; };
-		A2F0A5542DBC293400D53638 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		A2F0A5562DBC293400D53638 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		A2F0A5582DBC293500D53638 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F693700F2DC16715006494B6 /* NavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarView.swift; sourceTree = "<group>"; };
@@ -108,8 +104,6 @@
 				A237A11A2DC1716E00B18607 /* Services */,
 				A237A1132DC1704500B18607 /* Models */,
 				A2F0A5522DBC293400D53638 /* DevOSApp.swift */,
-				A2F0A5542DBC293400D53638 /* ContentView.swift */,
-				A2F0A5562DBC293400D53638 /* Item.swift */,
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
 				A237A1212DC1747600B18607 /* MainView.swift */,
@@ -203,13 +197,11 @@
 				F69370102DC16715006494B6 /* NavBarView.swift in Sources */,
 				F69370182DC16CAD006494B6 /* MapView.swift in Sources */,
 				F69370162DC16CA4006494B6 /* HomeView.swift in Sources */,
-				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
 				F69370142DC16C96006494B6 /* CameraView.swift in Sources */,
 				F693701A2DC16F84006494B6 /* Tab.swift in Sources */,
 				A237A1172DC170D600B18607 /* User.swift in Sources */,
 				A237A1222DC1747600B18607 /* MainView.swift in Sources */,
 				A237A11E2DC171BC00B18607 /* APIService.swift in Sources */,
-				A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */,
 				A237A11C2DC171AD00B18607 /* AuthService.swift in Sources */,
 				A237A1272DC1792800B18607 /* UserService.swift in Sources */,
 				A237A1192DC1711300B18607 /* AuthResponse.swift in Sources */,
