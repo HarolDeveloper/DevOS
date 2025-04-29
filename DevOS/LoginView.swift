@@ -6,152 +6,179 @@ struct LoginView: View {
     @State private var rememberMe: Bool = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Logo
-            VStack {
-                Image("horno3-logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 150)
-                    .background(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+        ZStack(alignment: .top) {
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+                    .frame(maxWidth: .infinity)
+                    .frame(maxHeight: .infinity)
+                
+                Rectangle()
+                    .fill(Color.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+            .edgesIgnoringSafeArea(.all)
             
             
-            // Contenido principal
-            VStack(alignment: .leading, spacing: 24) {
-                // Título
-                Text("Log In")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(.black)
-                    .padding(.top, 20)
+            Image("horno3-logo")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 250)
+                .padding(.top, 50)
+            
+            // Contenedor del formulario
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(height: UIScreen.main.bounds.height * 0.27)
                 
-                // Email TextField
-                TextField("", text: $email)
-                    .placeholder(when: email.isEmpty) {
-                        Text("Email o nombre de usuario").foregroundColor(.gray.opacity(0.8))
-                    }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    )
-                
-                // Password TextField
-                SecureField("", text: $password)
-                    .placeholder(when: password.isEmpty) {
-                        Text("Contraseña").foregroundColor(.gray.opacity(0.8))
-                    }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    )
-                
-                // Remember me y ¿Olvidaste tu contraseña?
-                HStack {
-                    Button(action: {
-                        rememberMe.toggle()
-                    }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: rememberMe ? "checkmark.square.fill" : "square")
-                                .foregroundColor(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
-                            
-                            Text("Remember me")
+                // Tarjeta blanca con formulario
+                VStack(alignment: .leading, spacing: 20) {
+                    // Título
+                    Text("Log In")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(.black)
+                        .padding(.bottom, 10)
+                    
+                    // Email TextField
+                    TextField("", text: $email)
+                        .placeholder(when: email.isEmpty) {
+                            Text("Email o nombre de usuario").foregroundColor(.gray.opacity(0.8))
+                        }
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(24)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 24)
+                                .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
+                        )
+                    
+                    // Password TextField
+                    SecureField("", text: $password)
+                        .placeholder(when: password.isEmpty) {
+                            Text("Contraseña").foregroundColor(.gray.opacity(0.8))
+                        }
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(24)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 24)
+                                .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
+                        )
+                    
+                    // Remember me y ¿Olvidaste tu contraseña?
+                    HStack {
+                        Button(action: {
+                            rememberMe.toggle()
+                        }) {
+                            HStack(spacing: 8) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(rememberMe ? Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)) : Color.clear)
+                                        .frame(width: 22, height: 22)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)), lineWidth: 2)
+                                        )
+                                    
+                                    if rememberMe {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                                
+                                Text("Remember me")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            // Lógica para recuperar contraseña
+                        }) {
+                            Text("¿Olvidaste tu contraseña?")
                                 .font(.system(size: 14))
                                 .foregroundColor(.gray)
                         }
                     }
                     
-                    Spacer()
-                    
+                    // Sign In button
                     Button(action: {
-                        // Lógica para recuperar contraseña
+                        // Lógica de inicio de sesión
                     }) {
-                        Text("¿Olvidaste tu contraseña?")
+                        Text("Sign In")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+                            .cornerRadius(25)
+                    }
+                    .padding(.top, 10)
+                    
+                    // No tienes cuenta / Crea tu cuenta
+                    HStack {
+                        Text("¿No tienes cuenta?")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            // Navegación a registro
+                        }) {
+                            Text("Crea tu cuenta")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+                        }
                     }
-                }
-                
-                // Sign In Button
-                Button(action: {
-                    // Lógica de inicio de sesión
-                }) {
-                    Text("Sign In")
-                        .font(.system(size: 18, weight: .medium))
+                    .padding(.top, 10)
+                    
+                    // Separador
+                    HStack {
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(.gray.opacity(0.5))
+                        
+                        Circle()
+                            .strokeBorder(Color.gray.opacity(0.5), lineWidth: 1)
+                            .background(Circle().fill(.white))
+                            .frame(width: 16, height: 16)
+                        
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(.gray.opacity(0.5))
+                    }
+                    .padding()
+                    
+                    // Sign In with Apple
+                    Button(action: {
+                        // Lógica de inicio de sesión con Apple
+                    }) {
+                        HStack {
+                            Image(systemName: "apple.logo")
+                                .font(.system(size: 18))
+                                .padding(.trailing, 8)
+                            
+                            Text("Sign In with Apple")
+                                .font(.system(size: 16, weight: .medium))
+                        }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+                        .background(Color.black)
                         .cornerRadius(24)
-                }
-                .padding(.top, 10)
-                
-                // No tienes cuenta
-                HStack{
-                    Text("¿No tienes cuenta?")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
-                    Spacer()
-                    
-                    Button(action: {
-                        // Navegación a registro
-                    }) {
-                        Text("Crea tu cuenta")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
                     }
-                    
                 }
-                .padding(.top, 10)
-                
-                // Separador
-                HStack {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray.opacity(0.5))
-                    
-                    Circle()
-                        .strokeBorder(Color.gray.opacity(0.5), lineWidth: 1)
-                        .background(Circle().fill(.white))
-                        .frame(width: 24, height: 24)
-                    
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray.opacity(0.5))
-                }
-                .padding(.vertical, 24)
-                
-                // Sign In with Apple
-                Button(action: {
-                    // Lógica de inicio de sesión con Apple
-                }) {
-                    HStack {
-                        Image(systemName: "apple.logo")
-                            .font(.system(size: 18))
-                        
-                        Text("Sign In with Apple")
-                            .font(.system(size: 16, weight: .medium))
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.black)
-                    .cornerRadius(24)
-                }
+                .padding(24)
+                .background(Color.white)
+                .cornerRadius(20, corners: [.topLeft, .topRight])
+                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: -5)
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 24)
-            .background(Color.white)
         }
-        .background(Color.gray.opacity(0.1))
-        
     }
 }
 
@@ -166,6 +193,23 @@ extension View {
             placeholder().opacity(shouldShow ? 1 : 0)
             self
         }
+    }
+}
+
+// Extension para aplicar border radius solo a ciertas esquinas
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
     }
 }
 
