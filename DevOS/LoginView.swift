@@ -5,12 +5,12 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
     @State private var rememberMe: Bool = false
-    
-    // State to track whether we're showing login or registration view
     @State private var isShowingRegister: Bool = false
-    
-    // State for animation offset
     @State private var slideOffset: CGFloat = 0
+    
+    // States to control password visibility
+    @State private var isPasswordVisible: Bool = false
+    @State private var isConfirmPasswordVisible: Bool = false
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -19,8 +19,6 @@ struct LoginView: View {
                     .fill(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
                     .frame(maxWidth: .infinity)
                     .frame(maxHeight: .infinity)
-                
-                
             }
             .edgesIgnoringSafeArea(.all)
             
@@ -35,9 +33,8 @@ struct LoginView: View {
                 Spacer()
                     .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.343 : UIScreen.main.bounds.height * 0.31)
                 
-                // Tarjeta blanca con formulario - spacing adaptativo
+                // Tarjeta blanca con formulario
                 VStack(alignment: .leading, spacing: isShowingRegister ? 16 : 20) {
-                    // Título animado
                     ZStack {
                         // Login Title
                         Text("Log In")
@@ -75,18 +72,36 @@ struct LoginView: View {
                                         .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
                                 )
                             
-                            // Password TextField
-                            SecureField("", text: $password)
-                                .placeholder(when: password.isEmpty) {
-                                    Text("Contraseña").foregroundColor(.gray.opacity(0.8))
+                            // Password TextField with visibility toggle
+                            ZStack(alignment: .trailing) {
+                                if isPasswordVisible {
+                                    TextField("", text: $password)
+                                        .placeholder(when: password.isEmpty) {
+                                            Text("Contraseña").foregroundColor(.gray.opacity(0.8))
+                                        }
+                                        .padding()
+                                } else {
+                                    SecureField("", text: $password)
+                                        .placeholder(when: password.isEmpty) {
+                                            Text("Contraseña").foregroundColor(.gray.opacity(0.8))
+                                        }
+                                        .padding()
                                 }
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(24)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 24)
-                                        .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
-                                )
+                                
+                                Button(action: {
+                                    isPasswordVisible.toggle()
+                                }) {
+                                    Image(systemName: isPasswordVisible ? "eye.fill" : "eye.slash.fill")
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(.trailing, 16)
+                            }
+                            .background(Color.white)
+                            .cornerRadius(24)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 24)
+                                    .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
+                            )
                             
                             // Remember me y ¿Olvidaste tu contraseña?
                             HStack {
@@ -132,6 +147,7 @@ struct LoginView: View {
                         
                         // Register form (more compact)
                         VStack(spacing: 16) {
+                            // Email TextField
                             TextField("", text: $email)
                                 .placeholder(when: email.isEmpty) {
                                     Text("Email").foregroundColor(.gray.opacity(0.8))
@@ -144,37 +160,72 @@ struct LoginView: View {
                                         .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
                                 )
                             
-                            // Password TextField (Register)
-                            SecureField("", text: $password)
-                                .placeholder(when: password.isEmpty) {
-                                    Text("Contraseña").foregroundColor(.gray.opacity(0.8))
+                            // Password TextField (Register) with visibility toggle
+                            ZStack(alignment: .trailing) {
+                                if isPasswordVisible {
+                                    TextField("", text: $password)
+                                        .placeholder(when: password.isEmpty) {
+                                            Text("Contraseña").foregroundColor(.gray.opacity(0.8))
+                                        }
+                                        .padding()
+                                } else {
+                                    SecureField("", text: $password)
+                                        .placeholder(when: password.isEmpty) {
+                                            Text("Contraseña").foregroundColor(.gray.opacity(0.8))
+                                        }
+                                        .padding()
                                 }
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(24)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 24)
-                                        .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
-                                )
+                                
+                                Button(action: {
+                                    isPasswordVisible.toggle()
+                                }) {
+                                    Image(systemName: isPasswordVisible ? "eye.fill" : "eye.slash.fill")
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(.trailing, 16)
+                            }
+                            .background(Color.white)
+                            .cornerRadius(24)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 24)
+                                    .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
+                            )
                             
-                            // Confirm Password TextField (Register)
-                            SecureField("", text: $confirmPassword)
-                                .placeholder(when: confirmPassword.isEmpty) {
-                                    Text("Confirma tu contraseña").foregroundColor(.gray.opacity(0.8))
+                            // Confirm Password TextField (Register) with visibility toggle
+                            ZStack(alignment: .trailing) {
+                                if isConfirmPasswordVisible {
+                                    TextField("", text: $confirmPassword)
+                                        .placeholder(when: confirmPassword.isEmpty) {
+                                            Text("Confirma tu contraseña").foregroundColor(.gray.opacity(0.8))
+                                        }
+                                        .padding()
+                                } else {
+                                    SecureField("", text: $confirmPassword)
+                                        .placeholder(when: confirmPassword.isEmpty) {
+                                            Text("Confirma tu contraseña").foregroundColor(.gray.opacity(0.8))
+                                        }
+                                        .padding()
                                 }
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(24)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 24)
-                                        .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
-                                )
+                                
+                                Button(action: {
+                                    isConfirmPasswordVisible.toggle()
+                                }) {
+                                    Image(systemName: isConfirmPasswordVisible ? "eye.fill" : "eye.slash.fill")
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(.trailing, 16)
+                            }
+                            .background(Color.white)
+                            .cornerRadius(24)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 24)
+                                    .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
+                            )
                         }
                         .offset(x: isShowingRegister ? 0 : UIScreen.main.bounds.width)
                         .opacity(isShowingRegister ? 1 : 0)
                     }
                     
-                    // Action Button
                     Button(action: {
                         // Lógica de inicio de sesión o registro
                     }) {
@@ -188,7 +239,6 @@ struct LoginView: View {
                     }
                     .padding(.top, 10)
                     
-                    // No tienes cuenta / Ya tienes cuenta
                     HStack {
                         Text(isShowingRegister ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?")
                             .font(.system(size: 14))
@@ -201,6 +251,10 @@ struct LoginView: View {
                             withAnimation(.easeInOut(duration: 0.5)) {
                                 isShowingRegister.toggle()
                                 slideOffset = isShowingRegister ? UIScreen.main.bounds.width : 0
+                                
+                                // Reset password visibility when switching views
+                                isPasswordVisible = false
+                                isConfirmPasswordVisible = false
                             }
                         }) {
                             Text(isShowingRegister ? "Inicia sesión" : "Crea tu cuenta")
@@ -210,42 +264,40 @@ struct LoginView: View {
                     }
                     .padding(.top, 10)
                     
-                    
-                        HStack {
-                            Rectangle()
-                                .frame(height: 1)
-                                .foregroundColor(.gray.opacity(0.5))
-                            
-                            Circle()
-                                .strokeBorder(Color.gray.opacity(0.5), lineWidth: 1)
-                                .background(Circle().fill(.white))
-                                .frame(width: 16, height: 16)
-                            
-                            Rectangle()
-                                .frame(height: 1)
-                                .foregroundColor(.gray.opacity(0.5))
-                        }
-                        .padding()
+                    HStack {
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(.gray.opacity(0.5))
                         
-                        // Sign In with Apple (solo en login view)
-                        Button(action: {
-                            // Lógica de inicio de sesión con Apple
-                        }) {
-                            HStack {
-                                Image(systemName: "apple.logo")
-                                    .font(.system(size: 18))
-                                    .padding(.trailing, 8)
-                                
-                                Text(isShowingRegister ? "Register with Apple" : "Sign In with Apple")
-                                    .font(.system(size: 16, weight: .medium))
-                            }
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.black)
-                            .cornerRadius(24)
-                        }
+                        Circle()
+                            .strokeBorder(Color.gray.opacity(0.5), lineWidth: 1)
+                            .background(Circle().fill(.white))
+                            .frame(width: 16, height: 16)
+                        
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(.gray.opacity(0.5))
+                    }
+                    .padding()
                     
+                    // Sign In with Apple
+                    Button(action: {
+                        // Lógica de inicio de sesión con Apple
+                    }) {
+                        HStack {
+                            Image(systemName: "apple.logo")
+                                .font(.system(size: 18))
+                                .padding(.trailing, 8)
+                            
+                            Text(isShowingRegister ? "Register with Apple" : "Sign In with Apple")
+                                .font(.system(size: 16, weight: .medium))
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.black)
+                        .cornerRadius(24)
+                    }
                 }
                 .padding(24)
                 .background(Color.white)
