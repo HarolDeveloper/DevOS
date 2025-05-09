@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A088714E2DC032DC00E542FC /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A088714D2DC032DC00E542FC /* MapView.swift */; };
+		A08871832DCD7C6400E542FC /* ExperienceTitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08871822DCD7C6400E542FC /* ExperienceTitles.swift */; };
 		A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5522DBC293400D53638 /* DevOSApp.swift */; };
 		A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5542DBC293400D53638 /* ContentView.swift */; };
 		A2F0A5572DBC293400D53638 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5562DBC293400D53638 /* Item.swift */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A088714D2DC032DC00E542FC /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		A08871822DCD7C6400E542FC /* ExperienceTitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceTitles.swift; sourceTree = "<group>"; };
 		A2F0A54F2DBC293400D53638 /* DevOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2F0A5522DBC293400D53638 /* DevOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevOSApp.swift; sourceTree = "<group>"; };
 		A2F0A5542DBC293400D53638 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -55,6 +59,8 @@
 			children = (
 				A2F0A5522DBC293400D53638 /* DevOSApp.swift */,
 				A2F0A5542DBC293400D53638 /* ContentView.swift */,
+				A088714D2DC032DC00E542FC /* MapView.swift */,
+				A08871822DCD7C6400E542FC /* ExperienceTitles.swift */,
 				A2F0A5562DBC293400D53638 /* Item.swift */,
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
@@ -140,7 +146,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A08871832DCD7C6400E542FC /* ExperienceTitles.swift in Sources */,
 				A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */,
+				A088714E2DC032DC00E542FC /* MapView.swift in Sources */,
 				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
 				A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */,
 			);
