@@ -14,6 +14,9 @@
 		A237A1222DC1747600B18607 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1212DC1747600B18607 /* MainView.swift */; };
 		A237A1252DC174B500B18607 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1242DC174B500B18607 /* AuthViewModel.swift */; };
 		A237A1272DC1792800B18607 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1262DC1792800B18607 /* UserService.swift */; };
+		65D176722DC06978008159AC /* CarouselItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D176712DC06978008159AC /* CarouselItem.swift */; };
+		65D176742DC06A64008159AC /* CarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D176732DC06A64008159AC /* CarouselView.swift */; };
+		65D176762DC06BE8008159AC /* CarouselItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D176752DC06BE8008159AC /* CarouselItemView.swift */; };
 		A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5522DBC293400D53638 /* DevOSApp.swift */; };
 		A2F0A5592DBC293500D53638 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A5582DBC293500D53638 /* Assets.xcassets */; };
 		A2F0A55C2DBC293500D53638 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */; };
@@ -32,6 +35,9 @@
 		A237A1212DC1747600B18607 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		A237A1242DC174B500B18607 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		A237A1262DC1792800B18607 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		65D176712DC06978008159AC /* CarouselItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselItem.swift; sourceTree = "<group>"; };
+		65D176732DC06A64008159AC /* CarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselView.swift; sourceTree = "<group>"; };
+		65D176752DC06BE8008159AC /* CarouselItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselItemView.swift; sourceTree = "<group>"; };
 		A2F0A54F2DBC293400D53638 /* DevOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2F0A5522DBC293400D53638 /* DevOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevOSApp.swift; sourceTree = "<group>"; };
 		A2F0A5582DBC293500D53638 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -106,7 +112,12 @@
 				A2F0A5522DBC293400D53638 /* DevOSApp.swift */,
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
+
 				A237A1212DC1747600B18607 /* MainView.swift */,
+				65D1766F2DC03980008159AC /* HomeView.swift */,
+				65D176732DC06A64008159AC /* CarouselView.swift */,
+				65D176752DC06BE8008159AC /* CarouselItemView.swift */,
+				65D176712DC06978008159AC /* CarouselItem.swift */,
 			);
 			path = DevOS;
 			sourceTree = "<group>";
@@ -205,6 +216,11 @@
 				A237A11C2DC171AD00B18607 /* AuthService.swift in Sources */,
 				A237A1272DC1792800B18607 /* UserService.swift in Sources */,
 				A237A1192DC1711300B18607 /* AuthResponse.swift in Sources */,
+				A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */,
+				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
+				65D176722DC06978008159AC /* CarouselItem.swift in Sources */,
+				65D176742DC06A64008159AC /* CarouselView.swift in Sources */,
+				65D176762DC06BE8008159AC /* CarouselItemView.swift in Sources */,
 				A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */,
 				A237A1252DC174B500B18607 /* AuthViewModel.swift in Sources */,
 			);
