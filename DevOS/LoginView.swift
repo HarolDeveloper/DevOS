@@ -7,12 +7,32 @@ struct LoginView: View {
     @State private var rememberMe: Bool = false
     @State private var isShowingRegister: Bool = false
     @State private var slideOffset: CGFloat = 0
-    
-    // States to control password visibility
     @State private var isPasswordVisible: Bool = false
     @State private var isConfirmPasswordVisible: Bool = false
+    @State private var isShowingForgotPassword: Bool = false
     
     var body: some View {
+        ZStack {
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+                    .frame(maxWidth: .infinity)
+                    .frame(maxHeight: .infinity)
+            }
+            .edgesIgnoringSafeArea(.all)
+            mainView
+                .offset(y: isShowingForgotPassword ? UIScreen.main.bounds.height : 0)
+            
+            if isShowingForgotPassword {
+                ForgotPasswordView(isPresented: $isShowingForgotPassword, email: email)
+                    .transition(.move(edge: .bottom))
+                    .zIndex(1)
+            }
+        }
+        .animation(.easeInOut(duration: 0.5), value: isShowingForgotPassword)
+    }
+    
+    private var mainView: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
                 Rectangle()
@@ -26,7 +46,7 @@ struct LoginView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 250)
-                .padding(.top, 50)
+                .padding(.top, 70)
             
             // Contenedor del formulario
             VStack(spacing: 0) {
@@ -36,7 +56,6 @@ struct LoginView: View {
                 // Tarjeta blanca con formulario
                 VStack(alignment: .leading, spacing: isShowingRegister ? 16 : 20) {
                     ZStack {
-                        // Login Title
                         Text("Log In")
                             .font(.system(size: 28, weight: .bold))
                             .foregroundColor(.black)
@@ -45,7 +64,6 @@ struct LoginView: View {
                             .offset(x: slideOffset)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        // Register Title
                         Text("Register")
                             .font(.system(size: 28, weight: .bold))
                             .foregroundColor(.black)
@@ -55,11 +73,9 @@ struct LoginView: View {
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
-                    // Form fields group
+                    // Form fields
                     ZStack {
-                        // Login form
                         VStack(spacing: 20) {
-                            // Email TextField
                             TextField("", text: $email)
                                 .placeholder(when: email.isEmpty) {
                                     Text("Email o nombre de usuario").foregroundColor(.gray.opacity(0.8))
@@ -72,7 +88,6 @@ struct LoginView: View {
                                         .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
                                 )
                             
-                            // Password TextField with visibility toggle
                             ZStack(alignment: .trailing) {
                                 if isPasswordVisible {
                                     TextField("", text: $password)
@@ -103,7 +118,7 @@ struct LoginView: View {
                                     .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
                             )
                             
-                            // Remember me y ¿Olvidaste tu contraseña?
+                            // Remember me y Olvidaste tu contraseña
                             HStack {
                                 Button(action: {
                                     rememberMe.toggle()
@@ -134,7 +149,10 @@ struct LoginView: View {
                                 Spacer()
                                 
                                 Button(action: {
-                                    // Lógica para recuperar contraseña
+                                    // Mostrar vista de contraseña olvidada
+                                    withAnimation {
+                                        isShowingForgotPassword = true
+                                    }
                                 }) {
                                     Text("¿Olvidaste tu contraseña?")
                                         .font(.system(size: 14))
@@ -145,9 +163,8 @@ struct LoginView: View {
                         .offset(x: isShowingRegister ? -UIScreen.main.bounds.width : 0)
                         .opacity(isShowingRegister ? 0 : 1)
                         
-                        // Register form (more compact)
+                        // Register form
                         VStack(spacing: 16) {
-                            // Email TextField
                             TextField("", text: $email)
                                 .placeholder(when: email.isEmpty) {
                                     Text("Email").foregroundColor(.gray.opacity(0.8))
@@ -160,7 +177,7 @@ struct LoginView: View {
                                         .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
                                 )
                             
-                            // Password TextField (Register) with visibility toggle
+                            // Password (Register)
                             ZStack(alignment: .trailing) {
                                 if isPasswordVisible {
                                     TextField("", text: $password)
@@ -191,7 +208,7 @@ struct LoginView: View {
                                     .stroke(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 0.3)), lineWidth: 1)
                             )
                             
-                            // Confirm Password TextField (Register) with visibility toggle
+                            // Confirm Password (Register)
                             ZStack(alignment: .trailing) {
                                 if isConfirmPasswordVisible {
                                     TextField("", text: $confirmPassword)
@@ -227,7 +244,7 @@ struct LoginView: View {
                     }
                     
                     Button(action: {
-                        // Lógica de inicio de sesión o registro
+                        // Lógica de inicio de sesión y registro
                     }) {
                         Text(isShowingRegister ? "Register" : "Sign In")
                             .font(.system(size: 18, weight: .medium))
@@ -247,7 +264,6 @@ struct LoginView: View {
                         Spacer()
                         
                         Button(action: {
-                            // Transición animada entre login y registro
                             withAnimation(.easeInOut(duration: 0.5)) {
                                 isShowingRegister.toggle()
                                 slideOffset = isShowingRegister ? UIScreen.main.bounds.width : 0
@@ -305,12 +321,12 @@ struct LoginView: View {
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: -5)
                 .animation(.easeInOut(duration: 0.5), value: isShowingRegister)
                 .frame(height: isShowingRegister ? 470 : 550)
+                
             }
         }
     }
 }
 
-// Extension para crear placeholder en TextField
 extension View {
     func placeholder<Content: View>(
         when shouldShow: Bool,
@@ -324,7 +340,6 @@ extension View {
     }
 }
 
-// Extension para aplicar border radius solo a ciertas esquinas
 extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))

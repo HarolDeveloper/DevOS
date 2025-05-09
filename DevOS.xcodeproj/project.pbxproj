@@ -12,6 +12,7 @@
 		A2F0A5572DBC293400D53638 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5562DBC293400D53638 /* Item.swift */; };
 		A2F0A5592DBC293500D53638 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A5582DBC293500D53638 /* Assets.xcassets */; };
 		A2F0A55C2DBC293500D53638 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */; };
+		EA812F062DCDB53800EEFB6B /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA812F052DCDB53800EEFB6B /* ForgotPasswordView.swift */; };
 		EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB0B8BD2DC16AF200DF567B /* LoginView.swift */; };
 /* End PBXBuildFile section */
 
@@ -22,6 +23,7 @@
 		A2F0A5562DBC293400D53638 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		A2F0A5582DBC293500D53638 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		EA812F052DCDB53800EEFB6B /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		EAB0B8BD2DC16AF200DF567B /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -58,6 +60,7 @@
 				A2F0A5522DBC293400D53638 /* DevOSApp.swift */,
 				A2F0A5542DBC293400D53638 /* ContentView.swift */,
 				EAB0B8BD2DC16AF200DF567B /* LoginView.swift */,
+				EA812F052DCDB53800EEFB6B /* ForgotPasswordView.swift */,
 				A2F0A5562DBC293400D53638 /* Item.swift */,
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
@@ -146,6 +149,7 @@
 				A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */,
 				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
 				EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */,
+				EA812F062DCDB53800EEFB6B /* ForgotPasswordView.swift in Sources */,
 				A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
