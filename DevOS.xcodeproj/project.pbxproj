@@ -24,6 +24,8 @@
 		A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5522DBC293400D53638 /* DevOSApp.swift */; };
 		A2F0A5592DBC293500D53638 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A5582DBC293500D53638 /* Assets.xcassets */; };
 		A2F0A55C2DBC293500D53638 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */; };
+		EA812F062DCDB53800EEFB6B /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA812F052DCDB53800EEFB6B /* ForgotPasswordView.swift */; };
+		EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB0B8BD2DC16AF200DF567B /* LoginView.swift */; };
 		F69370102DC16715006494B6 /* NavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F693700F2DC16715006494B6 /* NavBarView.swift */; };
 		F69370142DC16C96006494B6 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69370132DC16C96006494B6 /* CameraView.swift */; };
 		F69370162DC16CA4006494B6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69370152DC16CA4006494B6 /* HomeView.swift */; };
@@ -50,6 +52,8 @@
 		A2F0A5522DBC293400D53638 /* DevOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevOSApp.swift; sourceTree = "<group>"; };
 		A2F0A5582DBC293500D53638 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		EA812F052DCDB53800EEFB6B /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
+		EAB0B8BD2DC16AF200DF567B /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		F693700F2DC16715006494B6 /* NavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarView.swift; sourceTree = "<group>"; };
 		F69370132DC16C96006494B6 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		F69370152DC16CA4006494B6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -120,6 +124,10 @@
 				A237A11A2DC1716E00B18607 /* Services */,
 				A237A1132DC1704500B18607 /* Models */,
 				A2F0A5522DBC293400D53638 /* DevOSApp.swift */,
+				A2F0A5542DBC293400D53638 /* ContentView.swift */,
+				EAB0B8BD2DC16AF200DF567B /* LoginView.swift */,
+				EA812F052DCDB53800EEFB6B /* ForgotPasswordView.swift */,
+				A2F0A5562DBC293400D53638 /* Item.swift */,
 				A08871822DCD7C6400E542FC /* ExperienceTitles.swift */,
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
@@ -215,6 +223,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */,
+				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
+				EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */,
+				EA812F062DCDB53800EEFB6B /* ForgotPasswordView.swift in Sources */,
 				A08871832DCD7C6400E542FC /* ExperienceTitles.swift in Sources */,
 				F69370102DC16715006494B6 /* NavBarView.swift in Sources */,
 				F69370182DC16CAD006494B6 /* MapView.swift in Sources */,
