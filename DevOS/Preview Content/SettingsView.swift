@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var selectedLanguage = "English"
+    @State private var selectedLanguage = "Español"
 
     var body: some View {
         NavigationView {
@@ -17,7 +17,7 @@ struct SettingsView: View {
                         }
                     } label: {
                         HStack {
-                            Text("Language")
+                            Text("Idioma")
                             Spacer()
                             Text(selectedLanguage)
                                 .foregroundColor(.gray)
@@ -27,15 +27,15 @@ struct SettingsView: View {
                     }
 
                     // ✅ Sección de ajustes
-                    Section(header: Text("Account Settings")) {
+                    Section(header: Text("Configuraciones de la cuenta")) {
                         NavigationLink(destination: SecurityView()) {
-                            SettingsRow(icon: "lock.shield", title: "Security and privacy")
+                            SettingsRow(icon: "lock.shield", title: "Seguridad y privacidad")
                         }
                         NavigationLink(destination: FeedbackView()) {
-                            SettingsRow(icon: "message", title: "Feedback")
+                            SettingsRow(icon: "message", title: "Retroalimentación")
                         }
                         NavigationLink(destination: LoginView()) {
-                            SettingsRow(icon: "arrow.backward.circle", title: "Logout")
+                            SettingsRow(icon: "arrow.backward.circle", title: "Cerrar sesión")
                         }
                     }
                 }
