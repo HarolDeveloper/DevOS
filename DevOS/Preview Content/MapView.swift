@@ -11,6 +11,11 @@ struct MapView: View {
     @State private var selectedExperienceID: UUID? = nil
     @State private var searchText = ""
     @State private var displayType: BottomSheetDisplayType = .none
+    @State private var scale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @GestureState private var gestureOffset: CGSize = .zero
+    @GestureState private var gestureScale: CGFloat = 1.0
+
 
     var filteredExperiences: [Experience] {
         if searchText.isEmpty {
@@ -24,7 +29,60 @@ struct MapView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color(hex: "FE915E").ignoresSafeArea()
+
+            
+            GeometryReader { geo in
+                        ZStack {
+                            ZStack {
+                                Image("map_placeholder")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: geo.size.width, height: geo.size.height)
+
+                                if let selected = selectedExperienceID,
+                                   let selectedExperience = ExperienceData.all.first(where: { $0.id == selected }) {
+
+                                    let start = CGPoint(x: 0.25, y: 0.06)
+                                    let end = selectedExperience.position
+
+                                    Path { path in
+                                        path.move(to: CGPoint(x: start.x * geo.size.width, y: start.y * geo.size.height))
+                                        path.addLine(to: CGPoint(x: end.x * geo.size.width, y: end.y * geo.size.height))
+                                    }
+                                    .stroke(Color.purple, lineWidth: 5)
+                                    .animation(.easeInOut, value: selectedExperienceID)
+
+
+                                    Circle()
+                                        .fill(Color.red)
+                                        .frame(width: 16, height: 16)
+                                        .position(x: end.x * geo.size.width, y: end.y * geo.size.height)
+                                }
+                            }
+                            .scaleEffect(scale * gestureScale)
+                            .offset(x: offset.width + gestureOffset.width, y: offset.height + gestureOffset.height)
+                            .gesture(
+                                SimultaneousGesture(
+                                    MagnificationGesture()
+                                        .updating($gestureScale) { currentState, gestureState, _ in
+                                            gestureState = currentState
+                                        }
+                                        .onEnded { value in
+                                            scale *= value
+                                        },
+                                    DragGesture()
+                                        .updating($gestureOffset) { value, state, _ in
+                                            state = value.translation
+                                        }
+                                        .onEnded { value in
+                                            offset.width += value.translation.width
+                                            offset.height += value.translation.height
+                                        }
+                                )
+                            )
+                        }
+                    }
 
             BottomSheetAdvanceView(displayType: $displayType, maxHeight: 640) {
                 VStack(alignment: .leading, spacing: 16) {
@@ -94,6 +152,21 @@ fileprivate enum Constants {
     static let indicatorWidth: CGFloat = 60
     static let snapRatio: CGFloat = 0.25
     static let minHeightRatio: CGFloat = 0.3
+}
+
+extension Color {
+    init(hex: String) {
+        let scanner = Scanner(string: hex)
+        _ = scanner.scanString("#") // optional #
+        var rgb: UInt64 = 0
+        scanner.scanHexInt64(&rgb)
+
+        let r = Double((rgb >> 16) & 0xFF) / 255
+        let g = Double((rgb >> 8) & 0xFF) / 255
+        let b = Double(rgb & 0xFF) / 255
+
+        self.init(red: r, green: g, blue: b)
+    }
 }
 
 public enum BottomSheetDisplayType {

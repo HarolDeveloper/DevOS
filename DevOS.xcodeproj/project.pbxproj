@@ -21,6 +21,11 @@
 		A237A1222DC1747600B18607 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1212DC1747600B18607 /* MainView.swift */; };
 		A237A1252DC174B500B18607 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1242DC174B500B18607 /* AuthViewModel.swift */; };
 		A237A1272DC1792800B18607 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1262DC1792800B18607 /* UserService.swift */; };
+		A271A3512DD67D58005A4AB2 /* SeccionesPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A271A3502DD67D58005A4AB2 /* SeccionesPopupView.swift */; };
+		A271A3532DD67D76005A4AB2 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A271A3522DD67D76005A4AB2 /* SearchView.swift */; };
+		A271A3552DD67D8E005A4AB2 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A271A3542DD67D8E005A4AB2 /* DetailView.swift */; };
+		A271A3572DD67DAD005A4AB2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A271A3562DD67DAD005A4AB2 /* SettingsView.swift */; };
+		A271A3592DD67E24005A4AB2 /* CarouselPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A271A3582DD67E24005A4AB2 /* CarouselPopupView.swift */; };
 		A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0A5522DBC293400D53638 /* DevOSApp.swift */; };
 		A2F0A5592DBC293500D53638 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A5582DBC293500D53638 /* Assets.xcassets */; };
 		A2F0A55C2DBC293500D53638 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2F0A55B2DBC293500D53638 /* Preview Assets.xcassets */; };
@@ -48,6 +53,11 @@
 		A237A1212DC1747600B18607 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		A237A1242DC174B500B18607 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		A237A1262DC1792800B18607 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		A271A3502DD67D58005A4AB2 /* SeccionesPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeccionesPopupView.swift; sourceTree = "<group>"; };
+		A271A3522DD67D76005A4AB2 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		A271A3542DD67D8E005A4AB2 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		A271A3562DD67DAD005A4AB2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A271A3582DD67E24005A4AB2 /* CarouselPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselPopupView.swift; sourceTree = "<group>"; };
 		A2F0A54F2DBC293400D53638 /* DevOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2F0A5522DBC293400D53638 /* DevOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevOSApp.swift; sourceTree = "<group>"; };
 		A2F0A5582DBC293500D53638 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -124,18 +134,21 @@
 				A237A11A2DC1716E00B18607 /* Services */,
 				A237A1132DC1704500B18607 /* Models */,
 				A2F0A5522DBC293400D53638 /* DevOSApp.swift */,
-				A2F0A5542DBC293400D53638 /* ContentView.swift */,
 				EAB0B8BD2DC16AF200DF567B /* LoginView.swift */,
 				EA812F052DCDB53800EEFB6B /* ForgotPasswordView.swift */,
-				A2F0A5562DBC293400D53638 /* Item.swift */,
 				A08871822DCD7C6400E542FC /* ExperienceTitles.swift */,
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
 				A237A1212DC1747600B18607 /* MainView.swift */,
 				65D176732DC06A64008159AC /* CarouselView.swift */,
+				A271A3582DD67E24005A4AB2 /* CarouselPopupView.swift */,
 				65D176752DC06BE8008159AC /* CarouselItemView.swift */,
 				65D176712DC06978008159AC /* CarouselItem.swift */,
 				A22935252DD5701A0012FC6E /* ZonaClassifier.swift */,
+				A271A3502DD67D58005A4AB2 /* SeccionesPopupView.swift */,
+				A271A3522DD67D76005A4AB2 /* SearchView.swift */,
+				A271A3542DD67D8E005A4AB2 /* DetailView.swift */,
+				A271A3562DD67DAD005A4AB2 /* SettingsView.swift */,
 			);
 			path = DevOS;
 			sourceTree = "<group>";
@@ -223,14 +236,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A2F0A5552DBC293400D53638 /* ContentView.swift in Sources */,
-				A2F0A5572DBC293400D53638 /* Item.swift in Sources */,
 				EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */,
 				EA812F062DCDB53800EEFB6B /* ForgotPasswordView.swift in Sources */,
+				A271A3512DD67D58005A4AB2 /* SeccionesPopupView.swift in Sources */,
 				A08871832DCD7C6400E542FC /* ExperienceTitles.swift in Sources */,
+				A271A3532DD67D76005A4AB2 /* SearchView.swift in Sources */,
+				A271A3592DD67E24005A4AB2 /* CarouselPopupView.swift in Sources */,
 				F69370102DC16715006494B6 /* NavBarView.swift in Sources */,
 				F69370182DC16CAD006494B6 /* MapView.swift in Sources */,
 				F69370162DC16CA4006494B6 /* HomeView.swift in Sources */,
+				A271A3552DD67D8E005A4AB2 /* DetailView.swift in Sources */,
 				A22935262DD5701D0012FC6E /* ZonaClassifier.swift in Sources */,
 				F69370142DC16C96006494B6 /* CameraView.swift in Sources */,
 				A229351B2DD55C4B0012FC6E /* CameraViewModel.swift in Sources */,
@@ -247,6 +262,7 @@
 				A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */,
 				A237A1252DC174B500B18607 /* AuthViewModel.swift in Sources */,
 				A22935242DD56FC10012FC6E /* MyWalletClassifier.mlmodel in Sources */,
+				A271A3572DD67DAD005A4AB2 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
