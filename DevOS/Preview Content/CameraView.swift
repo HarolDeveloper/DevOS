@@ -30,40 +30,51 @@ struct CameraView: View {
                 }
             }
         }
-        .onChange(of: camera.capturedImage) { oldValue, newValue in
-            if newValue != nil {
+        .onChange(of: camera.capturedImage) { _, newValue in
+            if let image = newValue {
+                camera.clasificarZona(from: image)
                 showBottomSheet = true
             }
         }
         .sheet(isPresented: $showBottomSheet) {
             if let image = camera.capturedImage {
-                    VStack {
-                        Text("Foto Capturada")
-                            .font(.headline)
-                            .padding()
+                VStack(spacing: 16) {
+                    Text("📸 Foto Capturada")
+                        .font(.headline)
 
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .cornerRadius(12)
-                            .padding()
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .cornerRadius(12)
+                        .padding(.horizontal)
 
-                        Button("Cerrar") {
-                            showBottomSheet = false
-                        }
-                        .padding(.bottom)
+                    if let zona = camera.zonaDetectada {
+                        Text("📍 Zona detectada:")
+                            .font(.subheadline)
+                        Text(zona)
+                            .font(.title2)
+                            .foregroundColor(.blue)
+                    } else {
+                        Text("Detectando zona...")
+                            .foregroundColor(.gray)
                     }
-                    .presentationDetents([.medium, .large])
-                }
-                   
-        }
 
+                    Button("Cerrar") {
+                        showBottomSheet = false
+                    }
+                    .padding(.bottom)
+                }
+                .padding()
+                .presentationDetents([.medium, .large])
+            }
+        }
     }
 }
 
 #Preview {
     CameraView()
 }
+
 
 
 

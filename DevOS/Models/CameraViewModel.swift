@@ -5,14 +5,17 @@
 //  Created by H Lancheros Alvarez on 14/05/25.
 //
 
-
+import Foundation
 import AVFoundation
 import UIKit
 
 class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
     let session = AVCaptureSession()
     private let output = AVCapturePhotoOutput()
+    private let zonaClassifier = ZonaClassifier()
+
     @Published var capturedImage: UIImage?
+    @Published var zonaDetectada: String?
 
     override init() {
         super.init()
@@ -26,8 +29,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         guard let device = AVCaptureDevice.default(for: .video),
               let input = try? AVCaptureDeviceInput(device: device),
               session.canAddInput(input),
-              session.canAddOutput(output)
-        else {
+              session.canAddOutput(output) else {
             print("Error configurando la cámara")
             return
         }
@@ -43,14 +45,23 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         output.capturePhoto(with: settings, delegate: self)
     }
 
-    // Delegate: guarda la foto capturada
     func photoOutput(_ output: AVCapturePhotoOutput,
                      didFinishProcessingPhoto photo: AVCapturePhoto,
                      error: Error?) {
         guard let data = photo.fileDataRepresentation(),
               let image = UIImage(data: data) else { return }
+
         DispatchQueue.main.async {
             self.capturedImage = image
+        }
+    }
+
+    func clasificarZona(from image: UIImage) {
+        zonaClassifier?.clasificar(image: image) { [weak self] resultado in
+            DispatchQueue.main.async {
+                self?.zonaDetectada = resultado
+                print("📍 Zona detectada: \(resultado ?? "Desconocida")")
+            }
         }
     }
 }

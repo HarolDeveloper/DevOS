@@ -12,6 +12,8 @@
 		65D176762DC06BE8008159AC /* CarouselItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D176752DC06BE8008159AC /* CarouselItemView.swift */; };
 		A08871832DCD7C6400E542FC /* ExperienceTitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08871822DCD7C6400E542FC /* ExperienceTitles.swift */; };
 		A229351B2DD55C4B0012FC6E /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A229351A2DD55C4B0012FC6E /* CameraViewModel.swift */; };
+		A22935242DD56FC10012FC6E /* MyWalletClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A22935232DD56FC10012FC6E /* MyWalletClassifier.mlmodel */; };
+		A22935262DD5701D0012FC6E /* ZonaClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22935252DD5701A0012FC6E /* ZonaClassifier.swift */; };
 		A237A1172DC170D600B18607 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1162DC170D600B18607 /* User.swift */; };
 		A237A1192DC1711300B18607 /* AuthResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A1182DC1711300B18607 /* AuthResponse.swift */; };
 		A237A11C2DC171AD00B18607 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A237A11B2DC171AD00B18607 /* AuthService.swift */; };
@@ -35,6 +37,8 @@
 		65D176752DC06BE8008159AC /* CarouselItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselItemView.swift; sourceTree = "<group>"; };
 		A08871822DCD7C6400E542FC /* ExperienceTitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceTitles.swift; sourceTree = "<group>"; };
 		A229351A2DD55C4B0012FC6E /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
+		A22935232DD56FC10012FC6E /* MyWalletClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MyWalletClassifier.mlmodel; sourceTree = "<group>"; };
+		A22935252DD5701A0012FC6E /* ZonaClassifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonaClassifier.swift; sourceTree = "<group>"; };
 		A237A1162DC170D600B18607 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		A237A1182DC1711300B18607 /* AuthResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
 		A237A11B2DC171AD00B18607 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
@@ -67,6 +71,7 @@
 		A237A1132DC1704500B18607 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				A22935232DD56FC10012FC6E /* MyWalletClassifier.mlmodel */,
 				A229351A2DD55C4B0012FC6E /* CameraViewModel.swift */,
 				A237A1162DC170D600B18607 /* User.swift */,
 				A237A1182DC1711300B18607 /* AuthResponse.swift */,
@@ -122,6 +127,7 @@
 				65D176732DC06A64008159AC /* CarouselView.swift */,
 				65D176752DC06BE8008159AC /* CarouselItemView.swift */,
 				65D176712DC06978008159AC /* CarouselItem.swift */,
+				A22935252DD5701A0012FC6E /* ZonaClassifier.swift */,
 			);
 			path = DevOS;
 			sourceTree = "<group>";
@@ -213,6 +219,7 @@
 				F69370102DC16715006494B6 /* NavBarView.swift in Sources */,
 				F69370182DC16CAD006494B6 /* MapView.swift in Sources */,
 				F69370162DC16CA4006494B6 /* HomeView.swift in Sources */,
+				A22935262DD5701D0012FC6E /* ZonaClassifier.swift in Sources */,
 				F69370142DC16C96006494B6 /* CameraView.swift in Sources */,
 				A229351B2DD55C4B0012FC6E /* CameraViewModel.swift in Sources */,
 				F693701A2DC16F84006494B6 /* Tab.swift in Sources */,
@@ -227,6 +234,7 @@
 				65D176762DC06BE8008159AC /* CarouselItemView.swift in Sources */,
 				A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */,
 				A237A1252DC174B500B18607 /* AuthViewModel.swift in Sources */,
+				A22935242DD56FC10012FC6E /* MyWalletClassifier.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
