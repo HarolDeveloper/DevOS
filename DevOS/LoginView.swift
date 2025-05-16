@@ -30,6 +30,7 @@ struct LoginView: View {
             }
         }
         .animation(.easeInOut(duration: 0.5), value: isShowingForgotPassword)
+
     }
     
     private var mainView: some View {
@@ -51,7 +52,7 @@ struct LoginView: View {
             // Contenedor del formulario
             VStack(spacing: 0) {
                 Spacer()
-                    .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.343 : UIScreen.main.bounds.height * 0.31)
+                    .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.3425 : UIScreen.main.bounds.height * 0.31)
                 
                 // Tarjeta blanca con formulario
                 VStack(alignment: .leading, spacing: isShowingRegister ? 16 : 20) {

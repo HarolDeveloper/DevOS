@@ -11,22 +11,24 @@ struct ForgotPasswordView: View {
     }
     
     var body: some View {
-        ZStack() {
+        ZStack {
+            Color.white
+                .edgesIgnoringSafeArea(.all)
             
-            VStack(spacing: 0) {
+            VStack {
+                Spacer().frame(height: UIScreen.main.bounds.height * 0.2)
                 
-                VStack(spacing: 20) {
+                VStack(spacing: 32) {
                     Text("Recupera tu contraseña")
                         .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
+                        .padding(.leading)
                     
                     Text("Ingresa tu correo electrónico y te enviaremos un código de verificación para restablecer tu contraseña.")
                         .font(.system(size: 16))
                         .foregroundColor(.gray)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 20)
+                        .frame(maxWidth: .infinity)
                     
                     TextField("", text: $email)
                         .placeholder(when: email.isEmpty) {
@@ -69,19 +71,19 @@ struct ForgotPasswordView: View {
                         .foregroundColor(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
                     }
                     .padding(.top, 20)
-                    
-                    Spacer()
                 }
                 .padding(24)
-                .background(Color.white)
+                .frame(height: UIScreen.main.bounds.height / 2)
                 
+                // Este espaciador ocupará el resto del espacio
+                // aproximadamente 1/4 de la pantalla
+                Spacer()
             }
         }
+        .ignoresSafeArea(.keyboard)
     }
 }
 
-
-
-#Preview{
+#Preview {
     ForgotPasswordView(isPresented: .constant(true))
 }
