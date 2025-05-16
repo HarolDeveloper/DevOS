@@ -11,6 +11,12 @@ struct LoginView: View {
     @State private var isConfirmPasswordVisible: Bool = false
     @State private var isShowingForgotPassword: Bool = false
     
+    init() {
+        // Cargar datos guardados si existen
+        _email = State(initialValue: UserDefaults.standard.string(forKey: "savedEmail") ?? "")
+        _password = State(initialValue: UserDefaults.standard.string(forKey: "savedPassword") ?? "")
+        _rememberMe = State(initialValue: UserDefaults.standard.bool(forKey: "rememberMe"))
+    }
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
@@ -246,6 +252,9 @@ struct LoginView: View {
                     
                     Button(action: {
                         // Lógica de inicio de sesión y registro
+                        if rememberMe {
+                            saveCredentials()
+                        }
                     }) {
                         Text(isShowingRegister ? "Register" : "Sign In")
                             .font(.system(size: 18, weight: .medium))
@@ -326,7 +335,22 @@ struct LoginView: View {
             }
         }
     }
+    private func saveCredentials() {
+            if rememberMe {
+                // Guardar credenciales
+                UserDefaults.standard.set(email, forKey: "savedEmail")
+                UserDefaults.standard.set(password, forKey: "savedPassword")
+                UserDefaults.standard.set(true, forKey: "rememberMe")
+            } else {
+                // Borrar credenciales guardadas
+                UserDefaults.standard.removeObject(forKey: "savedEmail")
+                UserDefaults.standard.removeObject(forKey: "savedPassword")
+                UserDefaults.standard.set(false, forKey: "rememberMe")
+            }
+    }
 }
+
+
 
 extension View {
     func placeholder<Content: View>(
