@@ -11,6 +11,7 @@ struct LoginView: View {
     @State private var isPasswordVisible: Bool = false
     @State private var isConfirmPasswordVisible: Bool = false
     @State private var isShowingForgotPassword: Bool = false
+    @State private var navigateToHome: Bool = false
     
     init() {
         // Cargar datos guardados si existen
@@ -19,24 +20,29 @@ struct LoginView: View {
         _rememberMe = State(initialValue: UserDefaults.standard.bool(forKey: "rememberMe"))
     }
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                Rectangle()
-                    .fill(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
-                    .frame(maxWidth: .infinity)
-                    .frame(maxHeight: .infinity)
+        NavigationStack {
+            ZStack {
+                VStack(spacing: 0) {
+                    Rectangle()
+                        .fill(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+                        .frame(maxWidth: .infinity)
+                        .frame(maxHeight: .infinity)
+                }
+                .edgesIgnoringSafeArea(.all)
+                mainView
+                    .offset(y: isShowingForgotPassword ? UIScreen.main.bounds.height : 0)
+                
+                if isShowingForgotPassword {
+                    ForgotPasswordView(isPresented: $isShowingForgotPassword, email: email)
+                        .transition(.move(edge: .bottom))
+                        .zIndex(1)
+                }
+                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
+                    EmptyView()
+                }
             }
-            .edgesIgnoringSafeArea(.all)
-            mainView
-                .offset(y: isShowingForgotPassword ? UIScreen.main.bounds.height : 0)
-            
-            if isShowingForgotPassword {
-                ForgotPasswordView(isPresented: $isShowingForgotPassword, email: email)
-                    .transition(.move(edge: .bottom))
-                    .zIndex(1)
-            }
+            .animation(.easeInOut(duration: 0.5), value: isShowingForgotPassword)
         }
-        .animation(.easeInOut(duration: 0.5), value: isShowingForgotPassword)
 
     }
     
@@ -387,7 +393,7 @@ struct LoginView: View {
                     DispatchQueue.main.async {
                         if success {
                             print("Autenticación exitosa")
-                            // Navegar a la pantalla principal o realizar tu lógica de éxito
+                            navigateToHome = true
                         } else {
                             // Manejar el error, pero no abortar la aplicación
                             print("Error")
