@@ -1,4 +1,5 @@
 import SwiftUI
+import LocalAuthentication
 
 struct LoginView: View {
     @State private var email: String = ""
@@ -58,7 +59,7 @@ struct LoginView: View {
             // Contenedor del formulario
             VStack(spacing: 0) {
                 Spacer()
-                    .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.3425 : UIScreen.main.bounds.height * 0.31)
+                    .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.3425 : UIScreen.main.bounds.height * 0.26)
                 
                 // Tarjeta blanca con formulario
                 VStack(alignment: .leading, spacing: isShowingRegister ? 16 : 20) {
@@ -307,22 +308,45 @@ struct LoginView: View {
                     .padding()
                     
                     // Sign In with Apple
-                    Button(action: {
-                        // Lógica de inicio de sesión con Apple
-                    }) {
-                        HStack {
-                            Image(systemName: "apple.logo")
-                                .font(.system(size: 18))
-                                .padding(.trailing, 8)
-                            
-                            Text(isShowingRegister ? "Register with Apple" : "Sign In with Apple")
-                                .font(.system(size: 16, weight: .medium))
+                    VStack(spacing: 16) { // Añadir spacing para separar los botones
+                        Button(action: {
+                            // Lógica de inicio de sesión con Apple
+                        }) {
+                            HStack {
+                                Image(systemName: "apple.logo")
+                                    .font(.system(size: 18))
+                                    .padding(.trailing, 8)
+                                
+                                Text(isShowingRegister ? "Register with Apple" : "Sign In with Apple")
+                                    .font(.system(size: 16, weight: .medium))
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.black)
+                            .cornerRadius(24)
                         }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .cornerRadius(24)
+                        
+                        Button(action: {
+                            authFaceID()
+                        }) {
+                            HStack {
+                                Image(systemName: "faceid")
+                                    .font(.system(size: 18))
+                                    .padding(.trailing, 8)
+                                
+                                Text(isShowingRegister ? "Registro con Face ID" : "Iniciar sesión con Face ID")
+                                    .font(.system(size: 16, weight: .medium))
+                            }
+                            .foregroundColor(Color(UIColor.systemBlue))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            //.background(Color(UIColor.systemBlue)) // Color azul de sistema para diferenciar
+                            .cornerRadius(24)
+                        }
+                        // Solo mostrar el botón de Face ID en la pantalla de login, no en registro
+                        .opacity(isShowingRegister ? 0 : 1)
+                        .disabled(isShowingRegister)
                     }
                 }
                 .padding(24)
@@ -330,7 +354,7 @@ struct LoginView: View {
                 .cornerRadius(20, corners: [.topLeft, .topRight])
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: -5)
                 .animation(.easeInOut(duration: 0.5), value: isShowingRegister)
-                .frame(height: isShowingRegister ? 470 : 550)
+                .frame(height: isShowingRegister ? 470 : 650)
                 
             }
         }
@@ -347,6 +371,47 @@ struct LoginView: View {
                 UserDefaults.standard.removeObject(forKey: "savedPassword")
                 UserDefaults.standard.set(false, forKey: "rememberMe")
             }
+    }
+    
+    func authFaceID() {
+        // Asegurarnos de que estamos en el hilo principal
+        DispatchQueue.main.async {
+            let context = LAContext()
+            var error: NSError?
+            
+            // Primero verifica si el dispositivo soporta biometría
+            if
+                context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error){
+                let reason = "Iniciar sesión en la aplicación"
+                context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, error in
+                    DispatchQueue.main.async {
+                        if success {
+                            print("Autenticación exitosa")
+                            // Navegar a la pantalla principal o realizar tu lógica de éxito
+                        } else {
+                            // Manejar el error, pero no abortar la aplicación
+                            print("Error")
+                            // self.mostrarAlerta("Autenticación fallida", mensaje: "Por favor intenta de nuevo o usa tu contraseña.")
+                        }
+            }
+            
+            
+            
+            
+            // Solo intenta autenticar si la biometría está disponible
+            
+                }
+            }
+        }
+    }
+
+    // Agrega esta función para mostrar alertas en lugar de bloquear la app
+    func mostrarAlerta(_ titulo: String, mensaje: String) {
+        let alerta = UIAlertController(title: titulo, message: mensaje, preferredStyle: .alert)
+        alerta.addAction(UIAlertAction(title: "OK", style: .default))
+        // Para presentar desde SwiftUI, necesitarás usar UIViewControllerRepresentable o
+        // En SwiftUI 2.0+, puedes usar .alert() directamente
+        // self.present(alerta, animated: true)
     }
 }
 
