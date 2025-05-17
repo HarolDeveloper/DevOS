@@ -13,10 +13,10 @@ struct MainView: View {
     
     var body: some View {
         Group {
-            if authViewModel.isAuthenticated {
+            if authViewModel.isLoggedIn {
               NavBarView()
             } else {
-              NavBarView()
+                LoginView()
             }
         }
         .environmentObject(authViewModel)

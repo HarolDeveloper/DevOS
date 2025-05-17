@@ -6,88 +6,70 @@
 //
 
 import Foundation
+import Combine
+import Supabase
 
-class AuthService {
-    static let shared = AuthService()
-    private let apiService = APIService.shared
-    private let tokenKey = "authToken"
-    private let userDefaultsKey = "currentUser"
-    
+
+class SupabaseManager {
+    static let shared = SupabaseManager()
+
+    let client: SupabaseClient
+
     private init() {
-        // Restaurar token guardado en UserDefaults si existe
-        if let savedToken = UserDefaults.standard.string(forKey: tokenKey) {
-            apiService.setAuthToken(savedToken)
-        }
-    }
-    
-    var isAuthenticated: Bool {
-        return UserDefaults.standard.string(forKey: tokenKey) != nil
-    }
-    
-    // Registro de nuevo usuario
-    func register(email: String, password: String, name: String) async throws -> User {
-        let body: [String: Any] = [
-            "email": email,
-            "password": password,
-            "name": name
-        ]
-        
-        let authResponse: AuthResponse = try await apiService.request(
-            endpoint: "auth/register",
-            method: "POST",
-            body: body
+        client = SupabaseClient(
+            supabaseURL: URL(string: "https://vhdoljnhrltfbqcnuijj.supabase.co")!,
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoZG9sam5ocmx0ZmJxY251aWpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3NTk1ODEsImV4cCI6MjA2MjMzNTU4MX0.69qk8uyN5zz79MgiGrfh7bZ318HAiqcYXOhSgHp5MPM"
         )
-        
-        // Guardar token y usuario
-        saveAuthState(token: authResponse.token, user: authResponse.user)
-        
-        return authResponse.user
     }
-    
-    // Inicio de sesión
-    func login(email: String, password: String) async throws -> User {
-        let body: [String: Any] = [
-            "email": email,
-            "password": password
-        ]
-        
-        let authResponse: AuthResponse = try await apiService.request(
-            endpoint: "auth/login",
-            method: "POST",
-            body: body
-        )
-        
-        // Guardar token y usuario
-        saveAuthState(token: authResponse.token, user: authResponse.user)
-        
-        return authResponse.user
-    }
-    
-    // Cerrar sesión
-    func logout() {
-        // Limpiar token y usuario
-        UserDefaults.standard.removeObject(forKey: tokenKey)
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
-        apiService.clearAuthToken()
-    }
-    
-    // Guardar estado de autenticación
-    private func saveAuthState(token: String, user: User) {
-        UserDefaults.standard.set(token, forKey: tokenKey)
-        apiService.setAuthToken(token)
-        
-        // Guardar usuario
-        if let userData = try? JSONEncoder().encode(user) {
-            UserDefaults.standard.set(userData, forKey: userDefaultsKey)
+}
+
+
+
+@MainActor
+class AuthService: ObservableObject {
+    static let shared = AuthService()
+
+    private let supabase = SupabaseManager.shared.client
+
+    @Published var session: Session?
+    @Published var user: Auth.User?
+
+    private init() {
+        Task {
+            await refreshSession()
         }
     }
-    
-    // Obtener usuario actual
-    func getCurrentUser() -> User? {
-        guard let userData = UserDefaults.standard.data(forKey: userDefaultsKey) else {
-            return nil
+
+    func signUp(email: String, password: String) async throws {
+        let response = try await supabase.auth.signUp(email: email, password: password)
+        self.session = response.session
+        self.user = response.user
+    }
+
+    func signIn(email: String, password: String) async throws {
+        let session = try await supabase.auth.signIn(email: email, password: password)
+        self.session = session
+        self.user = session.user
+    }
+
+    func signOut() async throws {
+        try await supabase.auth.signOut()
+        self.session = nil
+        self.user = nil
+    }
+
+    func refreshSession() async {
+        do {
+            let session = try await supabase.auth.session
+            self.session = session
+            self.user = session.user
+        } catch {
+            self.session = nil
+            self.user = nil
         }
-        
-        return try? JSONDecoder().decode(User.self, from: userData)
+    }
+
+    var accessToken: String? {
+        session?.accessToken
     }
 }
