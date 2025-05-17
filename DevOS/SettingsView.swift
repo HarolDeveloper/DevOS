@@ -9,6 +9,9 @@ import SwiftUI
 
 struct SettingsView: View {
     @State private var selectedLanguage = "English"
+    @State private var showingLogoutAlert = false
+    @EnvironmentObject var authVM: AuthViewModel
+    @AppStorage("isLoggedIn") private var isLoggedIn: Bool = true
 
     var body: some View {
         NavigationView {
@@ -41,16 +44,31 @@ struct SettingsView: View {
                         NavigationLink(destination: FeedbackView()) {
                             SettingsRow(icon: "message", title: "Feedback")
                         }
-                        NavigationLink(destination: LoginView()) {
-                            SettingsRow(icon: "arrow.backward.circle", title: "Logout")
+                        Button(action: {
+                            showingLogoutAlert = true
+                        }) {
+                            SettingsRow(icon: "arrow.backward.circle", title: "Cerrar sesión")
+                        }
+                        .alert(isPresented: $showingLogoutAlert) {
+                            Alert(
+                                title: Text("Cerrar sesión"),
+                                message: Text("¿Estás seguro que deseas cerrar sesión?"),
+                                primaryButton: .destructive(Text("Cerrar sesión")) {
+                                    Task {
+                                        await authVM.signOut()
+                                        isLoggedIn = false
+                                    }
+                                },
+                                secondaryButton: .cancel(Text("Cancelar"))
+                            )
                         }
                     }
                 }
-                .listStyle(GroupedListStyle())
+                .listStyle(.grouped)
                 .background(Color.black.edgesIgnoringSafeArea(.all))
             }
+            .navigationTitle("")
             .navigationBarHidden(true)
-            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }

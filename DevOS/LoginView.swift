@@ -1,7 +1,10 @@
 import SwiftUI
+import UIKit
 import LocalAuthentication
 
+
 struct LoginView: View {
+    @EnvironmentObject private var authVM: AuthViewModel
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
@@ -12,13 +15,7 @@ struct LoginView: View {
     @State private var isConfirmPasswordVisible: Bool = false
     @State private var isShowingForgotPassword: Bool = false
     @State private var navigateToHome: Bool = false
-    
-    init() {
-        // Cargar datos guardados si existen
-        _email = State(initialValue: UserDefaults.standard.string(forKey: "savedEmail") ?? "")
-        _password = State(initialValue: UserDefaults.standard.string(forKey: "savedPassword") ?? "")
-        _rememberMe = State(initialValue: UserDefaults.standard.bool(forKey: "rememberMe"))
-    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -42,8 +39,17 @@ struct LoginView: View {
                 }
             }
             .animation(.easeInOut(duration: 0.5), value: isShowingForgotPassword)
+            .alert(item: Binding<AuthAlert?>(
+              get: { 
+                  authVM.errorMessage != nil ? AuthAlert(message: authVM.errorMessage!) : nil
+              },
+              set: { _ in 
+                  authVM.errorMessage = nil 
+             }
+          )) { alert in
+              Alert(title: Text("Error"), message: Text(alert.message), dismissButton: .default(Text("Aceptar")))
+          }
         }
-
     }
     
     private var mainView: some View {
@@ -66,6 +72,7 @@ struct LoginView: View {
             VStack(spacing: 0) {
                 Spacer()
                     .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.3425 : UIScreen.main.bounds.height * 0.26)
+
                 
                 // Tarjeta blanca con formulario
                 VStack(alignment: .leading, spacing: isShowingRegister ? 16 : 20) {
@@ -258,9 +265,19 @@ struct LoginView: View {
                     }
                     
                     Button(action: {
-                        // Lógica de inicio de sesión y registro
-                        if rememberMe {
-                            saveCredentials()
+                        Task {
+                            authVM.email = email
+                            authVM.password = password
+                            
+                            if isShowingRegister {
+                                guard password == confirmPassword else {
+                                    authVM.errorMessage = "Las contraseñas no coinciden"
+                                    return
+                                }
+                                await authVM.signUp()
+                            } else {
+                                await authVM.signIn()
+                            }
                         }
                     }) {
                         Text(isShowingRegister ? "Register" : "Sign In")
@@ -272,6 +289,16 @@ struct LoginView: View {
                             .cornerRadius(25)
                     }
                     .padding(.top, 10)
+                    .overlay(
+                        Group {
+                            if authVM.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    .scaleEffect(1.5)
+                            }
+                        }
+                    )
+
                     
                     HStack {
                         Text(isShowingRegister ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?")
@@ -365,19 +392,7 @@ struct LoginView: View {
             }
         }
     }
-    private func saveCredentials() {
-            if rememberMe {
-                // Guardar credenciales
-                UserDefaults.standard.set(email, forKey: "savedEmail")
-                UserDefaults.standard.set(password, forKey: "savedPassword")
-                UserDefaults.standard.set(true, forKey: "rememberMe")
-            } else {
-                // Borrar credenciales guardadas
-                UserDefaults.standard.removeObject(forKey: "savedEmail")
-                UserDefaults.standard.removeObject(forKey: "savedPassword")
-                UserDefaults.standard.set(false, forKey: "rememberMe")
-            }
-    }
+
     
     func authFaceID() {
         // Asegurarnos de que estamos en el hilo principal
@@ -402,26 +417,16 @@ struct LoginView: View {
             }
             
             
-            
-            
-            // Solo intenta autenticar si la biometría está disponible
-            
                 }
             }
         }
     }
-
-    // Agrega esta función para mostrar alertas en lugar de bloquear la app
-    func mostrarAlerta(_ titulo: String, mensaje: String) {
-        let alerta = UIAlertController(title: titulo, message: mensaje, preferredStyle: .alert)
-        alerta.addAction(UIAlertAction(title: "OK", style: .default))
-        // Para presentar desde SwiftUI, necesitarás usar UIViewControllerRepresentable o
-        // En SwiftUI 2.0+, puedes usar .alert() directamente
-        // self.present(alerta, animated: true)
-    }
 }
 
-
+struct AuthAlert: Identifiable {
+    var id: String { message }
+    let message: String
+}
 
 extension View {
     func placeholder<Content: View>(
@@ -454,4 +459,5 @@ struct RoundedCorner: Shape {
 
 #Preview{
     LoginView()
+        .environmentObject(AuthViewModel())
 }
