@@ -1,9 +1,10 @@
 import SwiftUI
 import UIKit
-
+import LocalAuthentication
 
 
 struct LoginView: View {
+    @EnvironmentObject private var authVM: AuthViewModel
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
@@ -13,37 +14,41 @@ struct LoginView: View {
     @State private var isPasswordVisible: Bool = false
     @State private var isConfirmPasswordVisible: Bool = false
     @State private var isShowingForgotPassword: Bool = false
-    @EnvironmentObject private var authVM: AuthViewModel
+    @State private var navigateToHome: Bool = false
 
-    
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                Rectangle()
-                    .fill(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
-                    .frame(maxWidth: .infinity)
-                    .frame(maxHeight: .infinity)
+        NavigationStack {
+            ZStack {
+                VStack(spacing: 0) {
+                    Rectangle()
+                        .fill(Color(UIColor(red: 239/255, green: 127/255, blue: 72/255, alpha: 1.0)))
+                        .frame(maxWidth: .infinity)
+                        .frame(maxHeight: .infinity)
+                }
+                .edgesIgnoringSafeArea(.all)
+                mainView
+                    .offset(y: isShowingForgotPassword ? UIScreen.main.bounds.height : 0)
+                
+                if isShowingForgotPassword {
+                    ForgotPasswordView(isPresented: $isShowingForgotPassword, email: email)
+                        .transition(.move(edge: .bottom))
+                        .zIndex(1)
+                }
+                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
+                    EmptyView()
+                }
             }
-            .edgesIgnoringSafeArea(.all)
-            mainView
-                .offset(y: isShowingForgotPassword ? UIScreen.main.bounds.height : 0)
-            
-            if isShowingForgotPassword {
-                ForgotPasswordView(isPresented: $isShowingForgotPassword, email: email)
-                    .transition(.move(edge: .bottom))
-                    .zIndex(1)
-            }
-        }
-        .animation(.easeInOut(duration: 0.5), value: isShowingForgotPassword)
-        .alert(item: Binding<AuthAlert?>(
-            get: { 
-                authVM.errorMessage != nil ? AuthAlert(message: authVM.errorMessage!) : nil
-            },
-            set: { _ in 
-                authVM.errorMessage = nil 
-            }
-        )) { alert in
-            Alert(title: Text("Error"), message: Text(alert.message), dismissButton: .default(Text("Aceptar")))
+            .animation(.easeInOut(duration: 0.5), value: isShowingForgotPassword)
+            .alert(item: Binding<AuthAlert?>(
+              get: { 
+                  authVM.errorMessage != nil ? AuthAlert(message: authVM.errorMessage!) : nil
+              },
+              set: { _ in 
+                  authVM.errorMessage = nil 
+             }
+          )) { alert in
+              Alert(title: Text("Error"), message: Text(alert.message), dismissButton: .default(Text("Aceptar")))
+          }
         }
     }
     
@@ -66,7 +71,8 @@ struct LoginView: View {
             // Contenedor del formulario
             VStack(spacing: 0) {
                 Spacer()
-                    .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.343 : UIScreen.main.bounds.height * 0.31)
+                    .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.3425 : UIScreen.main.bounds.height * 0.26)
+
                 
                 // Tarjeta blanca con formulario
                 VStack(alignment: .leading, spacing: isShowingRegister ? 16 : 20) {
@@ -335,22 +341,45 @@ struct LoginView: View {
                     .padding()
                     
                     // Sign In with Apple
-                    Button(action: {
-                        // Lógica de inicio de sesión con Apple
-                    }) {
-                        HStack {
-                            Image(systemName: "apple.logo")
-                                .font(.system(size: 18))
-                                .padding(.trailing, 8)
-                            
-                            Text(isShowingRegister ? "Register with Apple" : "Sign In with Apple")
-                                .font(.system(size: 16, weight: .medium))
+                    VStack(spacing: 16) { // Añadir spacing para separar los botones
+                        Button(action: {
+                            // Lógica de inicio de sesión con Apple
+                        }) {
+                            HStack {
+                                Image(systemName: "apple.logo")
+                                    .font(.system(size: 18))
+                                    .padding(.trailing, 8)
+                                
+                                Text(isShowingRegister ? "Register with Apple" : "Sign In with Apple")
+                                    .font(.system(size: 16, weight: .medium))
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.black)
+                            .cornerRadius(24)
                         }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .cornerRadius(24)
+                        
+                        Button(action: {
+                            authFaceID()
+                        }) {
+                            HStack {
+                                Image(systemName: "faceid")
+                                    .font(.system(size: 18))
+                                    .padding(.trailing, 8)
+                                
+                                Text(isShowingRegister ? "Registro con Face ID" : "Iniciar sesión con Face ID")
+                                    .font(.system(size: 16, weight: .medium))
+                            }
+                            .foregroundColor(Color(UIColor.systemBlue))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            //.background(Color(UIColor.systemBlue)) // Color azul de sistema para diferenciar
+                            .cornerRadius(24)
+                        }
+                        // Solo mostrar el botón de Face ID en la pantalla de login, no en registro
+                        .opacity(isShowingRegister ? 0 : 1)
+                        .disabled(isShowingRegister)
                     }
                 }
                 .padding(24)
@@ -358,8 +387,37 @@ struct LoginView: View {
                 .cornerRadius(20, corners: [.topLeft, .topRight])
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: -5)
                 .animation(.easeInOut(duration: 0.5), value: isShowingRegister)
-                .frame(height: isShowingRegister ? 470 : 550)
+                .frame(height: isShowingRegister ? 470 : 650)
                 
+            }
+        }
+    }
+
+    
+    func authFaceID() {
+        // Asegurarnos de que estamos en el hilo principal
+        DispatchQueue.main.async {
+            let context = LAContext()
+            var error: NSError?
+            
+            // Primero verifica si el dispositivo soporta biometría
+            if
+                context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error){
+                let reason = "Iniciar sesión en la aplicación"
+                context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, error in
+                    DispatchQueue.main.async {
+                        if success {
+                            print("Autenticación exitosa")
+                            navigateToHome = true
+                        } else {
+                            // Manejar el error, pero no abortar la aplicación
+                            print("Error")
+                            // self.mostrarAlerta("Autenticación fallida", mensaje: "Por favor intenta de nuevo o usa tu contraseña.")
+                        }
+            }
+            
+            
+                }
             }
         }
     }
