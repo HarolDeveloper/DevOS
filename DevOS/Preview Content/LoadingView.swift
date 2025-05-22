@@ -18,7 +18,7 @@ struct LoadingView: View {
             Image("horno3_Loading")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 350)
+                .frame(width: 220)
                 .opacity(fade ? 0.5 : 1.0)
                 .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: fade)
         }
