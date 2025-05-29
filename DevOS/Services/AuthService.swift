@@ -44,7 +44,20 @@ class AuthService: ObservableObject {
         let response = try await supabase.auth.signUp(email: email, password: password)
         self.session = response.session
         self.user = response.user
+
+        let userId = response.user.id.uuidString
+
+        try await supabase
+            .from("usuario")
+            .insert([
+                "auth_user_id": userId,
+                "email": email,
+                "fecha_creacion": ISO8601DateFormatter().string(from: Date()),
+                "tipo_usuario": "visitante"
+            ])
+            .execute()
     }
+
 
     func signIn(email: String, password: String) async throws {
         let session = try await supabase.auth.signIn(email: email, password: password)
