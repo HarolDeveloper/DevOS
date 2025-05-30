@@ -92,6 +92,8 @@ struct LoginView: View {
                     ZStack {
                         VStack(spacing: 20) {
                             TextField("", text: $email)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
                                 .placeholder(when: email.isEmpty) {
                                     Text("Email o nombre de usuario").foregroundColor(.gray.opacity(0.8))
                                 }
