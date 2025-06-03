@@ -183,6 +183,8 @@ struct LoginView: View {
                         // Register form
                         VStack(spacing: 16) {
                             TextField("", text: $email)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
                                 .placeholder(when: email.isEmpty) {
                                     Text("Email").foregroundColor(.gray.opacity(0.8))
                                 }
