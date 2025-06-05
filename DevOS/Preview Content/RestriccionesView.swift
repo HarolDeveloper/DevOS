@@ -14,25 +14,28 @@ struct RestriccionesView: View {
     @Binding var restriccionActividadAlta: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(spacing: 30) {
             // Encabezado
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("Restricciones")
-                    .font(.title2)
+                    .font(.title)
                     .fontWeight(.bold)
 
                 Text("Favor de seleccionar tus restricciones")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             // Toggles
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 20) {
                 Toggle("Quiero asistir al show", isOn: $deseaShow)
                 Toggle("Soy mayor de edad", isOn: $restriccionMayores)
                 Toggle("Tengo movilidad reducida", isOn: $restriccionMovilidad)
                 Toggle("No quiero actividad física alta", isOn: $restriccionActividadAlta)
             }
+            .toggleStyle(SwitchToggleStyle(tint: Color.orange))
+            .font(.body)
 
             Spacer()
         }
@@ -40,6 +43,7 @@ struct RestriccionesView: View {
         .padding(.top, 10)
     }
 }
+
 
 #Preview {
     RestriccionesView(

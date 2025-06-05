@@ -24,18 +24,21 @@ struct OnboardingView: View {
     ]
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("¡Cuéntanos tus gustos!")
-                .font(.title2)
-                .fontWeight(.bold)
+        VStack(spacing: 24) {
+            // Encabezado estilizado
+            VStack(spacing: 6) {
+                Text("¡Cuéntanos tus gustos!")
+                    .font(.title)
+                    .fontWeight(.bold)
 
-            Text("¡Elige las opciones que más te parezcan interesantes!")
-                .font(.subheadline)
-                .foregroundColor(.gray)
+                Text("Elige las opciones que más te interesen")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
 
-            VStack(spacing: 12) {
+            VStack(spacing: 14) {
                 ForEach(0..<interesesDisponibles.count / 2, id: \.self) { rowIndex in
-                    HStack {
+                    HStack(spacing: 12) {
                         tagButton(for: interesesDisponibles[rowIndex * 2])
                             .frame(maxWidth: .infinity, alignment: .leading)
                         tagButton(for: interesesDisponibles[rowIndex * 2 + 1])
@@ -43,7 +46,7 @@ struct OnboardingView: View {
                     }
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 30)
 
             Spacer()
         }
@@ -80,6 +83,7 @@ struct OnboardingView: View {
         }
     }
 }
+
 
 #Preview {
     OnboardingView(

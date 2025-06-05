@@ -19,7 +19,8 @@ struct OnboardingFlowView: View {
     @State private var restriccionActividadAlta = false
     @State private var intereses: [String] = []
     @State private var selectedTags: Set<String> = []
-
+    @State private var showErrorAcompanantes = false
+    @State private var showErrorActividad = false
     @State private var goToHome = false
 
     var body: some View {
@@ -28,7 +29,7 @@ struct OnboardingFlowView: View {
                 // Fondo naranja
                 Color(red: 0.996, green: 0.486, blue: 0.251)
                     .ignoresSafeArea()
-
+                
                 VStack(spacing: 0) {
                     // Logo
                     Image("horno3_Logo")
@@ -37,13 +38,13 @@ struct OnboardingFlowView: View {
                         .frame(height: 190)
                         .padding(.top, 20)
                         .padding(.bottom, 50)
-
+                    
                     // Fondo blanco redondeado
                     ZStack(alignment: .top) {
                         RoundedRectangle(cornerRadius: 50)
                             .fill(Color.white)
                             .ignoresSafeArea(edges: .bottom)
-
+                        
                         VStack(spacing: 0) {
                             // Vistas dentro del flujo
                             TabView(selection: $currentPage) {
@@ -54,14 +55,16 @@ struct OnboardingFlowView: View {
                                     restriccionActividadAlta: $restriccionActividadAlta
                                 )
                                 .tag(0)
-
+                                
                                 AcompanantesView(
                                     tipoAcompanantes: $tipoAcompanantes,
                                     actividadPreferida: $actividadPreferida,
+                                    showErrorAcompanantes: $showErrorAcompanantes,
+                                    showErrorActividad: $showErrorActividad,
                                     onNext: { currentPage += 1 }
                                 )
                                 .tag(1)
-
+                                
                                 OnboardingView(
                                     intereses: $intereses,
                                     selectedTags: $selectedTags,
@@ -72,26 +75,55 @@ struct OnboardingFlowView: View {
                             .tabViewStyle(.page(indexDisplayMode: .never))
                             .padding(.top, 40)
                             .padding(.horizontal)
-
+                            
                             // Botón dentro del fondo blanco
-                            Button(action: {
-                                if currentPage < 2 {
-                                    currentPage += 1
-                                } else {
-                                    intereses = Array(selectedTags)
-                                    Task { await guardarYContinuar() }
+                            HStack(spacing: 16) {
+                                if currentPage > 0 {
+                                    Button(action: {
+                                        currentPage -= 1
+                                    }) {
+                                        Text("Atrás")
+                                            .font(.headline)
+                                            .foregroundColor(Color(red: 0.996, green: 0.486, blue: 0.251))
+                                            .padding()
+                                            .frame(maxWidth: .infinity)
+                                            .background(Color.white)
+                                            .cornerRadius(20)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .stroke(Color.orange, lineWidth: 2)
+                                            )
+                                    }
                                 }
-                            }) {
-                                Text(currentPage < 2 ? "Continuar" : "Empezar")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.orange)
-                                    .cornerRadius(20)
-                                    .padding(.horizontal, 30)
-                                    .padding(.bottom, 30)
+                                
+                                Button(action: {
+                                    if currentPage == 1 {
+                                        // Validación
+                                        showErrorAcompanantes = tipoAcompanantes.isEmpty
+                                        showErrorActividad = actividadPreferida.isEmpty
+
+                                        guard !showErrorAcompanantes, !showErrorActividad else {
+                                            return
+                                        }
+                                        currentPage += 1
+                                    } else if currentPage < 2 {
+                                        currentPage += 1
+                                    } else {
+                                        intereses = Array(selectedTags)
+                                        Task { await guardarYContinuar() }
+                                    }
+                                }) {
+                                    Text(currentPage < 2 ? "Continuar" : "Empezar")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color(red: 0.996, green: 0.486, blue: 0.251))
+                                        .cornerRadius(20)
+                                }
                             }
+                            .padding(.horizontal, 30)
+                            .padding(.bottom, 30)
                         }
                     }
                     .frame(maxHeight: .infinity)
