@@ -19,8 +19,13 @@ struct OnboardingFlowView: View {
     @State private var restriccionActividadAlta = false
     @State private var intereses: [String] = []
     @State private var selectedTags: Set<String> = []
+
     @State private var showErrorAcompanantes = false
     @State private var showErrorActividad = false
+    
+    @StateObject var authViewModel = AuthViewModel()
+    @StateObject private var preferenciaService = PreferenciaService()
+    
     @State private var goToHome = false
 
     var body: some View {
@@ -136,10 +141,11 @@ struct OnboardingFlowView: View {
     }
 
     func guardarYContinuar() async {
-        guard let userId = AuthService.shared.user?.id.uuidString else {
+        guard let userId = AuthService.shared.usuario?.id else {
             print("❌ Usuario no autenticado")
             return
         }
+        print(userId)
 
         let preferencias = PreferenciaVisita(
             usuario_id: userId,
@@ -153,12 +159,13 @@ struct OnboardingFlowView: View {
         )
 
         do {
-            try await guardarPreferencias(preferencia: preferencias)
+            try await preferenciaService.guardarPreferencias(preferencia: preferencias)
             await MainActor.run {
+                authViewModel.markOnboardingCompleted()
                 goToHome = true
             }
         } catch {
-            print("❌ Error guardando preferencias:", error)
+            print("❌ Error guardando preferencias:", error.localizedDescription)
         }
     }
 }

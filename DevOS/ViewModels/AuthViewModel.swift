@@ -15,13 +15,20 @@ class AuthViewModel: ObservableObject {
 
     @Published var isLoading = false
     @Published var isLoggedIn = false
+    @Published var isInitializing = true
+    @Published var hasCompletedOnboarding = false
     @Published var errorMessage: String?
-
+    
+    private let preferenciaService = PreferenciaService()
     private let authService = AuthService.shared
+
 
     init() {
         Task {
             await refreshSession()
+            await MainActor.run {
+                self.isInitializing = false
+            }
         }
     }
 
@@ -32,6 +39,7 @@ class AuthViewModel: ObservableObject {
         do {
             try await authService.signUp(email: email, password: password)
             isLoggedIn = true
+            hasCompletedOnboarding = false
         } catch {
             errorMessage = "Error al registrar: \(error.localizedDescription)"
             isLoggedIn = false
@@ -47,6 +55,7 @@ class AuthViewModel: ObservableObject {
         do {
             try await authService.signIn(email: email, password: password)
             isLoggedIn = true
+            await checkOnboardingStatus()
         } catch {
             errorMessage = "Error al iniciar sesión: \(error.localizedDescription)"
             isLoggedIn = false
@@ -62,6 +71,7 @@ class AuthViewModel: ObservableObject {
         do {
             try await authService.signOut()
             isLoggedIn = false
+            hasCompletedOnboarding = false
         } catch {
             errorMessage = "Error al cerrar sesión: \(error.localizedDescription)"
         }
@@ -72,5 +82,28 @@ class AuthViewModel: ObservableObject {
     func refreshSession() async {
         await authService.refreshSession()
         isLoggedIn = authService.user != nil
+        if isLoggedIn {
+            await checkOnboardingStatus()
+        }
+    }
+    
+    // ✅ Nueva función para verificar el estado del onboarding
+    private func checkOnboardingStatus() async {
+        guard let userId = authService.user?.id.uuidString else {
+            hasCompletedOnboarding = false
+            return
+        }
+        
+        do {
+            hasCompletedOnboarding = try await preferenciaService.verificarPreferenciasUsuario(userId: userId)
+        } catch {
+            print("❌ Error verificando onboarding:", error)
+            hasCompletedOnboarding = false
+        }
+    }
+    
+    // ✅ Función para marcar onboarding como completado
+    func markOnboardingCompleted() {
+        hasCompletedOnboarding = true
     }
 }
