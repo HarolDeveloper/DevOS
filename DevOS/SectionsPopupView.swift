@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct SeccionesPopupView: View {
-    let item: HomeView.DatabaseItem
+struct SectionsPopupView: View {
+    let item: DatabaseItem
     let onClose: () -> Void
 
     var body: some View {
@@ -17,12 +17,10 @@ struct SeccionesPopupView: View {
                 Image(item.imageName)
                     .resizable()
                     .scaledToFill()
-                    .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
+                    .frame(maxWidth: 360, minHeight: 200, maxHeight: 200)
                     .clipped()
 
-                Button(action: {
-                    onClose()
-                }) {
+                Button(action: onClose) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.white)
                         .font(.title)
@@ -33,8 +31,6 @@ struct SeccionesPopupView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(item.title)
                     .font(.headline)
-                    .fixedSize(horizontal: false, vertical: true)
-
                 Text(item.description)
                     .font(.body)
             }

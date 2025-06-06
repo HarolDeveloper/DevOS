@@ -17,7 +17,7 @@ struct CarouselPopupView: View {
                 Image(item.imageName)
                     .resizable()
                     .scaledToFill()
-                    .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
+                    .frame(maxWidth: 360, minHeight: 200, maxHeight: 200)
                     .clipped()
 
 

@@ -1,16 +1,8 @@
-//
-//  HomeView.swift
-//  DevOS
-//
-//  Created by Juan Daniel Vázquez Alonso on 28/04/25.
-//
-
 import SwiftUI
 
 struct HomeView: View {
     @State private var selectedCarouselItem: CarouselItem? = nil
     @State private var selectedSectionItem: DatabaseItem? = nil
-
     @State private var isSearching: Bool = false
 
     let sampleItems = [
@@ -34,17 +26,11 @@ struct HomeView: View {
         )
     ]
 
-    struct DatabaseItem {
-        let imageName: String
-        let title: String
-        let description: String
-    }
-
     let databaseItems = [
-        DatabaseItem(imageName: "infoImage", title: "Escaleras caracol", description: "Por aquí se sube al segundo piso del museo."),
-        DatabaseItem(imageName: "updateImage", title: "Museo de acero", description: "Aquí podrás realizar distintas actividaades."),
-        DatabaseItem(imageName: "featureImage", title: "Arquitectura", description: "Algunos de los diseños más sorprendentes del parque."),
-        DatabaseItem(imageName: "maintenanceImage", title: "Museo de historia", description: "Aquí podrás aprender sobre el horno 3.")
+        DatabaseItem(imageName: "escalera", title: "Escaleras caracol", description: "Por aquí se sube al segundo piso del museo."),
+        DatabaseItem(imageName: "acero", title: "Museo de acero", description: "Aquí podrás realizar distintas actividaades."),
+        DatabaseItem(imageName: "arquitectura", title: "Arquitectura", description: "Algunos de los diseños más sorprendentes del parque."),
+        DatabaseItem(imageName: "historia", title: "Museo de historia", description: "Aquí podrás aprender sobre el horno 3.")
     ]
 
     let columns = [
@@ -56,114 +42,129 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    // Encabezado con título y ajustes
-                    HStack {
-                        Text("¡Bienvenido!")
-                            .fontWeight(.semibold)
-                            .font(.system(size: 24))
-                            .padding(.leading)
+                    headerView()
+                    searchBarView()
 
-                        Spacer()
-
-                        NavigationLink(destination: SettingsView()) {
-                            Image("Settings")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 32, height: 32)
-                                .padding(.trailing)
-                        }
-                    }
-                    .padding(.top)
-
-                    // Barra de búsqueda
-                    NavigationLink(destination: SearchView(isPresented: $isSearching), isActive: $isSearching) {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                            Text("¿Qué estás buscando hoy?")
-                                .foregroundColor(.gray)
-                            Spacer()
-                        }
-                        .padding(12)
-                        .background(Color.white)
-                        .cornerRadius(20)
-                        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
-                        .padding(.horizontal)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-
-                    // Carrusel
                     CarouselView(items: sampleItems) { item in
                         selectedCarouselItem = item
                     }
                     .padding(.horizontal)
-                    
+
                     Divider()
                         .padding()
 
-                    // Sección "Secciones"
-                    Text("Secciones")
-                        .fontWeight(.semibold)
-                        .font(.system(size: 24))
-                        .padding(.horizontal)
+                    sectionsGrid()
+                }
+            }
+            .overlay(
+                ZStack {
+                    carouselOverlay()
+                    sectionOverlay()
+                }
+            )
+            .animation(.spring(), value: selectedCarouselItem)
+            .animation(.spring(), value: selectedSectionItem)
+            .background(Color.white)
+        }
+    }
 
-                    LazyVGrid(columns: columns, spacing: 0) {
-                        ForEach(databaseItems, id: \.title) { item in
-                            VStack(alignment: .leading, spacing: 8) {
-                                Image(item.imageName)
-                                    .resizable()
-                                    .aspectRatio(1.6, contentMode: .fill)
-                                    .frame(height: 100)
-                                    .clipped()
-                                    .cornerRadius(10)
+    // MARK: - Subviews
 
-                                Text(item.title)
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
+    @ViewBuilder
+    private func headerView() -> some View {
+        HStack {
+            Text("¡Bienvenido!")
+                .fontWeight(.semibold)
+                .font(.system(size: 24))
+                .padding(.leading)
 
-                                Text(item.description)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(3) // ✅ Limita para evitar que se expanda
-                            }
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 220) // ✅ Fuerza misma altura en todas las tarjetas
-                            .background(Color.white)
-                            .cornerRadius(12)
+            Spacer()
+
+            NavigationLink(destination: SettingsView()) {
+                Image("Settings")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 32, height: 32)
+                    .padding(.trailing)
+            }
+        }
+        .padding(.top)
+    }
+
+    @ViewBuilder
+    private func searchBarView() -> some View {
+        NavigationLink(destination: SearchView(isPresented: $isSearching), isActive: $isSearching) {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+                Text("¿Qué estás buscando hoy?")
+                    .foregroundColor(.gray)
+                Spacer()
+            }
+            .padding(12)
+            .background(Color.white)
+            .cornerRadius(20)
+            .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+            .padding(.horizontal)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
+    @ViewBuilder
+    private func sectionsGrid() -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Secciones")
+                .fontWeight(.semibold)
+                .font(.system(size: 24))
+                .padding(.horizontal)
+
+            LazyVGrid(columns: columns, spacing: 0) {
+                ForEach(databaseItems) { item in
+                    SectionsItemView(item: item) {
+                        withAnimation {
+                            selectedSectionItem = item
                         }
                     }
                 }
             }
+        }
+    }
 
-            // Popup de Carousel
-            .overlay(
-                Group {
-                    if let selected = selectedCarouselItem {
-                        Color.black.opacity(0.4)
-                            .edgesIgnoringSafeArea(.all)
-                            .onTapGesture {
-                                withAnimation(.spring()) {
-                                    selectedCarouselItem = nil
-                                }
-                            }
-
-                        CarouselPopupView(item: selected) {
-                            withAnimation(.spring()) {
-                                selectedCarouselItem = nil
-                            }
-                        }
-                        .transition(.scale.combined(with: .opacity))
-                        .zIndex(1)
-                    }
+    @ViewBuilder
+    private func carouselOverlay() -> some View {
+        if let selected = selectedCarouselItem {
+            Color.black.opacity(0.4)
+                
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation { selectedCarouselItem = nil }
                 }
-            )
-            .animation(.spring(), value: selectedCarouselItem)
-            .background(Color.white) // fondo de NavigationStack
+
+            CarouselPopupView(item: selected) {
+                withAnimation { selectedCarouselItem = nil }
+            }
+            .transition(.scale.combined(with: .opacity))
+            .zIndex(2)
+        }
+    }
+
+    @ViewBuilder
+    private func sectionOverlay() -> some View {
+        if let section = selectedSectionItem {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea() // ✅ moderno y más preciso
+                .onTapGesture {
+                    withAnimation { selectedSectionItem = nil }
+                }
+
+            SectionsPopupView(item: section) {
+                withAnimation { selectedSectionItem = nil }
+            }
+            .transition(.scale.combined(with: .opacity))
+            .zIndex(1)
         }
     }
 }
-
 
 #Preview {
     HomeView()

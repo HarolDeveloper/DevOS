@@ -8,71 +8,103 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var selectedLanguage = "English"
+    @Environment(\.presentationMode) var presentationMode
+    @State private var selectedLanguageCode = "es"
     @State private var showingLogoutAlert = false
     @EnvironmentObject var authVM: AuthViewModel
     @AppStorage("isLoggedIn") private var isLoggedIn: Bool = true
 
     var body: some View {
-        NavigationView {
-            VStack {
-                List {
-                    // ✅ Selector de idioma con Menu contextual
-                    Menu {
-                        Button(action: { selectedLanguage = "English" }) {
-                            Label("English", systemImage: selectedLanguage == "English" ? "checkmark" : "")
-                        }
-                        Button(action: { selectedLanguage = "Spanish" }) {
-                            Label("Spanish", systemImage: selectedLanguage == "Spanish" ? "checkmark" : "")
-                        }
-                    } label: {
-                        HStack {
-                            Text("Language")
-                            Spacer()
-                            Text(selectedLanguage)
-                                .foregroundColor(.gray)
-                            Image(systemName: "chevron.down")
-                                .foregroundColor(.gray)
-                        }
+        List {
+            // MARK: Accesibilidad
+            Section(header: Text("accessibility".localized)) {
+                Menu {
+                    Button("english".localized) {
+                        selectedLanguageCode = "en"
+                        Bundle.setLanguage("en")
                     }
-
-                    // ✅ Sección de ajustes
-                    Section(header: Text("Account Settings")) {
-                        NavigationLink(destination: SecurityView()) {
-                            SettingsRow(icon: "lock.shield", title: "Security and privacy")
-                        }
-                        NavigationLink(destination: FeedbackView()) {
-                            SettingsRow(icon: "message", title: "Feedback")
-                        }
-                        Button(action: {
-                            showingLogoutAlert = true
-                        }) {
-                            SettingsRow(icon: "arrow.backward.circle", title: "Cerrar sesión")
-                        }
-                        .alert(isPresented: $showingLogoutAlert) {
-                            Alert(
-                                title: Text("Cerrar sesión"),
-                                message: Text("¿Estás seguro que deseas cerrar sesión?"),
-                                primaryButton: .destructive(Text("Cerrar sesión")) {
-                                    Task {
-                                        await authVM.signOut()
-                                        isLoggedIn = false
-                                    }
-                                },
-                                secondaryButton: .cancel(Text("Cancelar"))
-                            )
-                        }
+                    Button("spanish".localized) {
+                        selectedLanguageCode = "es"
+                        Bundle.setLanguage("es")
                     }
+                } label: {
+                    HStack {
+                        Image(systemName: "globe")
+                            .frame(width: 20, height: 20)
+                        Text("language".localized)
+                        Spacer()
+                        Text(
+                            selectedLanguageCode == "en"
+                                ? "english".localized
+                                : "spanish".localized
+                        )
+                        .foregroundColor(.gray)
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.vertical, 8)
                 }
-                .listStyle(.grouped)
-                .background(Color.black.edgesIgnoringSafeArea(.all))
             }
-            .navigationTitle("")
-            .navigationBarHidden(true)
+
+            // MARK: Privacidad
+            Section(header: Text("privacy".localized)) {
+                NavigationLink(destination: SecurityView()) {
+                    SettingsRow(icon: "lock.shield", title: "security".localized)
+                }
+            }
+
+            // MARK: Soporte
+            Section(header: Text("support".localized)) {
+                NavigationLink(destination: FeedbackView()) {
+                    SettingsRow(icon: "message", title: "feedback".localized)
+                }
+            }
+
+            // MARK: Sesión
+            Section(header: Text("session".localized)) {
+                Button(action: {
+                    showingLogoutAlert = true
+                }) {
+                    SettingsRow(icon: "arrow.backward.circle", title: "logout".localized)
+                        .foregroundColor(.red)
+                }
+                .alert(isPresented: $showingLogoutAlert) {
+                    Alert(
+                        title: Text("logout_title".localized),
+                        message: Text("logout_msg".localized),
+                        primaryButton: .destructive(Text("logout_confirm".localized)) {
+                            Task {
+                                await authVM.signOut()
+                                isLoggedIn = false
+                            }
+                        },
+                        secondaryButton: .cancel(Text("logout_cancel".localized))
+                    )
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+        .navigationTitle("settings".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("back".localized)
+                    }
+                    .foregroundColor(.black)
+                }
+            }
         }
     }
 }
 
+
+// MARK: - Reutilizable fila de configuración
 struct SettingsRow: View {
     let icon: String
     let title: String
@@ -82,30 +114,14 @@ struct SettingsRow: View {
             Image(systemName: icon)
                 .frame(width: 20, height: 20)
             Text(title)
-                .font(.body)
             Spacer()
         }
-        .padding()
-        .background(Color.white.opacity(0.1))
-        .cornerRadius(10)
+        .padding(.vertical, 8)
     }
 }
-
-// Dummy views to complete NavigationLinks
-struct SecurityView: View {
-    var body: some View {
-        Text("Security and Privacy Settings")
-
-    }
-}
-
-struct FeedbackView: View {
-    var body: some View {
-        Text("Send Feedback")
-    }
-}
-
 
 #Preview {
-    SettingsView()
+    NavigationStack {
+        SettingsView()
+    }
 }

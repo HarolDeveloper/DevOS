@@ -12,11 +12,13 @@ struct MainView: View {
     @StateObject var authViewModel = AuthViewModel()
     
     var body: some View {
-        Group {
-            if authViewModel.isLoggedIn {
-              NavBarView()
-            } else {
-                LoginView()
+        NavigationStack {
+            Group {
+                if authViewModel.isLoggedIn {
+                    NavBarView()
+                } else {
+                    LoginView()
+                }
             }
         }
         .environmentObject(authViewModel)
