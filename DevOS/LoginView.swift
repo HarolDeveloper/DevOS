@@ -366,9 +366,9 @@ struct LoginView: View {
                             HStack {
                                 Image(systemName: "faceid")
                                     .font(.system(size: 18))
-                                    .padding(.trailing, 8)
+                                    .padding(.trailing, 2)
                                 
-                                Text(isShowingRegister ? "Registro con Face ID" : "Iniciar sesión con Face ID")
+                                Text(isShowingRegister ? "Registro con Face ID" : "Face ID")
                                     .font(.system(size: 16, weight: .medium))
                             }
                             .foregroundColor(Color(UIColor.systemBlue))
