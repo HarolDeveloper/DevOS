@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var selectedCarouselItem: CarouselItem? = nil
     @State private var selectedSectionItem: DatabaseItem? = nil
+    @Environment(\.colorScheme) var colorScheme
 
     @State private var isSearching: Bool = false
 
@@ -79,13 +80,13 @@ struct HomeView: View {
                     NavigationLink(destination: SearchView(isPresented: $isSearching), isActive: $isSearching) {
                         HStack {
                             Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                             Text("¿Qué estás buscando hoy?")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                             Spacer()
                         }
                         .padding(12)
-                        .background(Color.white)
+                        .background(colorScheme == .dark ? Color(.systemGray5).opacity(0.7) : Color.white)
                         .cornerRadius(20)
                         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
                         .padding(.horizontal)
@@ -124,12 +125,12 @@ struct HomeView: View {
                                 Text(item.description)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
-                                    .lineLimit(3) // ✅ Limita para evitar que se expanda
+                                    .lineLimit(3)
                             }
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .frame(height: 220) // ✅ Fuerza misma altura en todas las tarjetas
-                            .background(Color.white)
+                            .frame(height: 220)
+                            .background(Color(.systemBackground))
                             .cornerRadius(12)
                         }
                     }
@@ -159,7 +160,7 @@ struct HomeView: View {
                 }
             )
             .animation(.spring(), value: selectedCarouselItem)
-            .background(Color.white) // fondo de NavigationStack
+            .background(Color(.systemBackground)) // fondo de NavigationStack
         }
     }
 }

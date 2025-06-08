@@ -24,38 +24,27 @@ class SupabaseManager {
 }
 
 
-
-@MainActor
 class AuthService: ObservableObject {
     static let shared = AuthService()
-
+    
     private let supabase = SupabaseManager.shared.client
 
     @Published var session: Session?
     @Published var user: Auth.User?
+    @Published var usuario: Usuario?
 
     private init() {
-        Task {
-            await refreshSession()
-        }
+        Task { await refreshSession() }
     }
+
+    // MARK: - Sign Up
 
     func signUp(email: String, password: String) async throws {
         let response = try await supabase.auth.signUp(email: email, password: password)
         self.session = response.session
         self.user = response.user
 
-        let userId = response.user.id.uuidString
-
-        try await supabase
-            .from("usuario")
-            .insert([
-                "auth_user_id": userId,
-                "email": email,
-                "fecha_creacion": ISO8601DateFormatter().string(from: Date()),
-                "tipo_usuario": "visitante"
-            ])
-            .execute()
+        try await registrarUsuario(email: email)
     }
 
 
@@ -63,23 +52,66 @@ class AuthService: ObservableObject {
         let session = try await supabase.auth.signIn(email: email, password: password)
         self.session = session
         self.user = session.user
+        try await obtenerUsuario()
     }
 
     func signOut() async throws {
         try await supabase.auth.signOut()
         self.session = nil
         self.user = nil
+        self.usuario = nil
     }
+
 
     func refreshSession() async {
         do {
             let session = try await supabase.auth.session
             self.session = session
             self.user = session.user
+            try await obtenerUsuario()
         } catch {
             self.session = nil
             self.user = nil
+            self.usuario = nil
         }
+    }
+
+
+    private func registrarUsuario(email: String) async throws {
+        guard let userId = user?.id.uuidString else { return }
+
+        let existentes: [Usuario] = try await supabase
+            .from("usuario")
+            .select()
+            .eq("id", value: userId)
+            .execute()
+            .value
+
+        if existentes.isEmpty {
+            let nuevo = [
+                "id": userId,
+                "auth_user_id": userId,
+                "email": email,
+                "tipo_usuario": "visitante",
+                "fecha_creacion": ISO8601DateFormatter().string(from: Date())
+            ]
+            try await supabase.from("usuario").insert([nuevo]).execute()
+        }
+
+        try await obtenerUsuario()
+    }
+
+    private func obtenerUsuario() async throws {
+        guard let userId = user?.id.uuidString else { return }
+
+        let resultado: [Usuario] = try await supabase
+            .from("usuario")
+            .select()
+            .eq("id", value: userId)
+            .execute()
+            .value
+
+        self.usuario = resultado.first
     }
 
     var accessToken: String? {
