@@ -6,192 +6,250 @@
 //
 
 import SwiftUI
+import MapKit
 
-struct MapView: View {
-    @State private var selectedExperienceID: UUID? = nil
-    @State private var searchText = ""
-    @State private var displayType: BottomSheetDisplayType = .none
-    @State private var scale: CGFloat = 1.0
-    @State private var offset: CGSize = .zero
-    @GestureState private var gestureOffset: CGSize = .zero
-    @GestureState private var gestureScale: CGFloat = 1.0
+public enum BottomSheetDisplayType: Equatable {
+    case fraction(CGFloat)
+    case minimized
+}
 
+private struct DisplayTypeKey: EnvironmentKey {
+    static let defaultValue: Binding<BottomSheetDisplayType> = .constant(.minimized)
+}
 
-    var filteredExperiences: [Experience] {
-        if searchText.isEmpty {
-            return ExperienceData.all
-        } else {
-            return ExperienceData.all.filter {
-                $0.title.lowercased().contains(searchText.lowercased())
-            }
-        }
+extension EnvironmentValues {
+    var displayType: Binding<BottomSheetDisplayType> {
+        get { self[DisplayTypeKey.self] }
+        set { self[DisplayTypeKey.self] = newValue }
+    }
+}
+
+struct DragToExpandWrapper<Content: View>: View {
+    @Environment(\.displayType) private var displayTypeBinding
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
     }
 
     var body: some View {
-        ZStack {
-            Color(hex: "FE915E").ignoresSafeArea()
+        content
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 5, coordinateSpace: .local)
+                    .onChanged { _ in
+                        displayTypeBinding.wrappedValue = .fraction(0.4)
+                    }
+            )
+    }
+}
 
-            
-            GeometryReader { geo in
-                        ZStack {
-                            ZStack {
-                                Image("map_placeholder")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: geo.size.width, height: geo.size.height)
+struct MapView: View {
+    @State private var selectedExperienceID: UUID? = nil
+    @State private var showPlanner = false
+    @State private var showRoute = false
+    @State private var estimatedTime = "30 min"
+    @State private var displayType: BottomSheetDisplayType = .minimized
+    @State private var routeDisplayType: BottomSheetDisplayType = .fraction(0.4)
+    @State private var rutaSugerida: [Zona] = []
 
-                                if let selected = selectedExperienceID,
-                                   let selectedExperience = ExperienceData.all.first(where: { $0.id == selected }) {
+    var filteredExperiences: [Experience] {
+        ExperienceData.all
+    }
 
-                                    let start = CGPoint(x: 0.25, y: 0.06)
-                                    let end = selectedExperience.position
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            MapKitUIViewRepresentable(
+                region: MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 25.6763, longitude: -100.2828),
+                    span: MKCoordinateSpan(latitudeDelta: 0.0012, longitudeDelta: 0.0012)
+                ),
+                selectedExperienceID: $selectedExperienceID
+            )
+            .edgesIgnoringSafeArea(.all)
 
-                                    Path { path in
-                                        path.move(to: CGPoint(x: start.x * geo.size.width, y: start.y * geo.size.height))
-                                        path.addLine(to: CGPoint(x: end.x * geo.size.width, y: end.y * geo.size.height))
+            if !showRoute {
+                Button(action: {
+                    showPlanner = true
+                }) {
+                    Text("Planear visita")
+                        .font(.system(size: 16, weight: .semibold))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color.orange)
+                        .foregroundColor(.white)
+                        .cornerRadius(20)
+                }
+                .padding(.top, 50)
+                .padding(.trailing, 20)
+                .shadow(radius: 4)
+            }
+
+            if !showRoute {
+                BottomSheetAdvanceView(displayType: $displayType, buttonFrame: .zero) {
+                    if case .fraction = displayType {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Secciones")
+                                .font(.title3)
+                                .foregroundColor(.gray)
+                                .padding(.horizontal, 16)
+                                .padding(.top, 10)
+                            ScrollView {
+                                LazyVStack(alignment: .leading, spacing: 16) {
+                                    ForEach(filteredExperiences) { experience in
+                                        Button {
+                                            selectedExperienceID = experience.id
+                                        } label: {
+                                            HStack {
+                                                Text(experience.emoji)
+                                                    .font(.system(size: 22))
+                                                Text(experience.title)
+                                                    .font(.system(size: 22, weight: .bold))
+                                                Spacer()
+                                            }
+                                            .padding()
+                                            .background(selectedExperienceID == experience.id ? Color(red: 0.992, green: 0.812, blue: 0.729) : .clear)
+                                            .cornerRadius(12)
+                                        }
+                                        .foregroundColor(.primary)
                                     }
-                                    .stroke(Color.purple, lineWidth: 5)
-                                    .animation(.easeInOut, value: selectedExperienceID)
-
-
-                                    Circle()
-                                        .fill(Color.red)
-                                        .frame(width: 16, height: 16)
-                                        .position(x: end.x * geo.size.width, y: end.y * geo.size.height)
                                 }
+                                .padding(.horizontal, 16)
+                                .padding(.top, 16)
+                                .padding(.bottom, 40)
                             }
-                            .scaleEffect(scale * gestureScale)
-                            .offset(x: offset.width + gestureOffset.width, y: offset.height + gestureOffset.height)
-                            .gesture(
-                                SimultaneousGesture(
-                                    MagnificationGesture()
-                                        .updating($gestureScale) { currentState, gestureState, _ in
-                                            gestureState = currentState
-                                        }
-                                        .onEnded { value in
-                                            scale *= value
-                                        },
-                                    DragGesture()
-                                        .updating($gestureOffset) { value, state, _ in
-                                            state = value.translation
-                                        }
-                                        .onEnded { value in
-                                            offset.width += value.translation.width
-                                            offset.height += value.translation.height
-                                        }
-                                )
-                            )
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
-                    }
-
-            BottomSheetAdvanceView(displayType: $displayType, maxHeight: 640) {
-                VStack(alignment: .leading, spacing: 16) {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.gray)
-                            .font(.system(size: 23))
-
-                        TextField("¿Qué quieres visitar?", text: $searchText)
-                            .font(.system(size: 23))
-                            .foregroundColor(.primary)
-                            .frame(height: 44)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .background(Color(.systemGray5))
-                    .cornerRadius(25)
-                    Text("Opciones")
-                        .font(.title3)
-                        .foregroundColor(.gray)
-                        .padding(.top, 18)
-
-                    VStack(alignment: .leading, spacing: 16) {
-                        ForEach(Array(filteredExperiences.enumerated()), id: \.element.id) { index, experience in
-                            Button(action: {
-                                selectedExperienceID = experience.id
-                            }) {
-                                HStack(alignment: .top) {
-                                    Text(experience.emoji)
-                                        .font(.system(size: 22))
-
-                                    Text(experience.title)
-                                        .font(.system(size: 22, weight: .bold))
-                                        .fixedSize(horizontal: false, vertical: true)
-
-                                    Spacer()
-
-                                    if index == 0 {
-                                        Text("Recomendado")
-                                            .font(.system(size: 18))
-                                            .fontWeight(.bold)
-                                            .foregroundColor(.white)
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 11)
-                                            .background(Color.blue.opacity(0.7))
-                                            .cornerRadius(20)
-                                    }
-                                }
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 12)
-                                .background(selectedExperienceID == experience.id ? Color(.systemGray5) : Color.clear)
-                                .cornerRadius(12)
+                    } else {
+                        VStack(spacing: 16) {
+                            Text("Secciones")
+                                .font(.title)
+                                .foregroundColor(.gray)
+                                .padding()
+                            DragToExpandWrapper {
+                                Color.clear.frame(height: 1)
                             }
-                            .foregroundColor(.primary)
+                            .padding(.horizontal)
+                            .padding(.top, 12)
+                            Spacer()
                         }
                     }
                 }
-                .padding(.horizontal)
             }
+
+            if showRoute {
+                BottomSheetAdvanceView(displayType: $routeDisplayType, buttonFrame: .zero) {
+                    if case .fraction = routeDisplayType {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("¡Sigue esta ruta!")
+                                .font(.title2)
+                                .bold()
+
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 20) {
+                                    ForEach(Array(rutaSugerida.enumerated()), id: \.element.id) { index, zona in
+                                        RouteCardView(
+                                            number: "#\(index + 1)",
+                                            title: zona.nombre,
+                                            image: "photo" // Reemplaza con imagen si tienes una real
+                                        )
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+
+                            HStack {
+                                Button(action: {
+                                    showRoute = false
+                                    displayType = .fraction(0.4)
+                                }) {
+                                    Text("Salir")
+                                        .foregroundColor(.white)
+                                        .frame(width: 120, height: 44)
+                                        .background(Color.red)
+                                        .cornerRadius(14)
+                                }
+
+                                Spacer()
+
+                                HStack(spacing: 6) {
+                                    Text("Tiempo estimado")
+                                    Circle().frame(width: 6, height: 6)
+                                    Text(estimatedTime).bold()
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                            }
+                            .padding(.horizontal)
+
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 12)
+                    } else {
+                        VStack(spacing: 16) {
+                            HStack(spacing: 6) {
+                                Text("Tiempo estimado")
+                                Circle().frame(width: 6, height: 6)
+                                Text(estimatedTime).bold()
+                            }
+                            .font(.title)
+                            .foregroundColor(.gray)
+                            .padding()
+                            DragToExpandWrapper {
+                                Color.clear.frame(height: 1)
+                            }
+                            .padding(.horizontal)
+                            .padding(.top, 12)
+                            Spacer()
+                        }
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showPlanner) {
+            VisitPlannerView(
+                showRouteSheet: $showRoute,
+                estimatedTime: $estimatedTime,
+                usuarioId: UUID(),
+                onRutaCalculada: { visita in
+                    Task {
+                        do {
+                            let zonas = try await ZonaService.shared.obtenerTodasZonas()
+                            let preferencias = try await PreferenciaService.shared.obtenerPorUsuario(visita.usuario_id)
+                            let ruta = calcularRutaOptima(zonas: zonas, visita: visita, preferencias: preferencias)
+                            self.rutaSugerida = ruta
+                        } catch {
+                            print("❌ Error al calcular ruta:", error)
+                        }
+                    }
+                }
+            )
+        }
+        .onAppear {
+            routeDisplayType = .fraction(0.4)
         }
     }
 }
 
 fileprivate enum Constants {
     static let radius: CGFloat = 16
-    static let indicatorHeight: CGFloat = 6
-    static let indicatorWidth: CGFloat = 60
-    static let snapRatio: CGFloat = 0.25
-    static let minHeightRatio: CGFloat = 0.3
+    static let indicatorHeight: CGFloat = 5
+    static let indicatorWidth: CGFloat = 40
+    static let minHeight: CGFloat = 120
 }
 
-extension Color {
-    init(hex: String) {
-        let scanner = Scanner(string: hex)
-        _ = scanner.scanString("#") // optional #
-        var rgb: UInt64 = 0
-        scanner.scanHexInt64(&rgb)
-
-        let r = Double((rgb >> 16) & 0xFF) / 255
-        let g = Double((rgb >> 8) & 0xFF) / 255
-        let b = Double(rgb & 0xFF) / 255
-
-        self.init(red: r, green: g, blue: b)
-    }
-}
-
-public enum BottomSheetDisplayType {
-    case fullScreen
-    case halfScreen
-    case none
-}
 
 struct BottomSheetAdvanceView<Content: View>: View {
     @Binding var displayType: BottomSheetDisplayType
-
-    let maxHeight: CGFloat
-    let minHeight: CGFloat
+    let buttonFrame: CGRect
     let content: Content
-
     @GestureState private var translation: CGFloat = 0
-    private var offset: CGFloat {
-        switch displayType {
-        case .fullScreen:
-            return 0
-        case .halfScreen:
-            return maxHeight * 0.40
-        case .none:
-            return maxHeight - minHeight
-        }
+    @State private var allowDrag = true
+
+    init(displayType: Binding<BottomSheetDisplayType>, buttonFrame: CGRect, @ViewBuilder content: () -> Content) {
+        self.content = content()
+        self._displayType = displayType
+        self.buttonFrame = buttonFrame
     }
 
     private var indicator: some View {
@@ -200,44 +258,71 @@ struct BottomSheetAdvanceView<Content: View>: View {
             .frame(width: Constants.indicatorWidth, height: Constants.indicatorHeight)
     }
 
-    init(displayType: Binding<BottomSheetDisplayType>, maxHeight: CGFloat, @ViewBuilder content: () -> Content) {
-        self.minHeight = 140
-        self.maxHeight = maxHeight
-        self.content = content()
-        self._displayType = displayType
-    }
-
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                self.indicator.padding()
-                self.content
-            }
-            .frame(width: geometry.size.width, height: self.maxHeight, alignment: .top)
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(Constants.radius)
-            .frame(height: geometry.size.height, alignment: .bottom)
-            .offset(y: max(self.offset + self.translation, 0))
-            .animation(.interactiveSpring(), value: displayType)
-            .gesture(
-                DragGesture().updating(self.$translation) { value, state, _ in
-                    state = value.translation.height
-                }.onEnded { value in
-                    let snapDistanceFullScreen = self.maxHeight * 0.35
-                    let snapDistanceHalfScreen = self.maxHeight * 0.85
-                    if value.location.y <= snapDistanceFullScreen {
-                        self.displayType = .fullScreen
-                    } else if value.location.y > snapDistanceFullScreen && value.location.y <= snapDistanceHalfScreen {
-                        self.displayType = .halfScreen
-                    } else {
-                        self.displayType = .none
-                    }
+            let screenHeight = geometry.size.height
+            let maxHeight = screenHeight * 0.85
+            let minHeight = Constants.minHeight
+            let totalHeight: CGFloat = {
+                switch displayType {
+                case .fraction(let value):
+                    return screenHeight * value
+                case .minimized:
+                    return minHeight
                 }
+            }()
+            let offset: CGFloat = {
+                switch displayType {
+                case .fraction(let value):
+                    return screenHeight - (screenHeight * value)
+                case .minimized:
+                    return screenHeight - minHeight
+                }
+            }()
+
+            VStack(spacing: 0) {
+                indicator
+                    .padding(.vertical, 8)
+                content
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+                // Spacer extra para cubrir el área cuando se estira
+                Spacer(minLength: screenHeight)
+                    .background(Color(.secondarySystemBackground))
+            }
+            .frame(width: geometry.size.width, height: totalHeight + screenHeight, alignment: .top)
+            .background(Color(.secondarySystemBackground))
+            .clipShape(UnevenRoundedRectangle(topLeadingRadius: Constants.radius, topTrailingRadius: Constants.radius))
+            .offset(y: offset + translation)
+            .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.8), value: displayType)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        allowDrag = !buttonFrame.contains(value.startLocation)
+                    }
+                    .updating($translation) { value, state, _ in
+                        if allowDrag {
+                            state = value.translation.height
+                        }
+                    }
+                    .onEnded { value in
+                        guard allowDrag else { return }
+                        let velocity = value.predictedEndLocation.y - value.location.y
+                        let translation = value.translation.height
+                        if translation < -50 || velocity < -200 {
+                            displayType = .fraction(0.4)
+                        } else {
+                            displayType = .minimized
+                        }
+                    }
             )
+            .environment(\.displayType, $displayType)
         }
+        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
+// MARK: - Preview
 #Preview {
     MapView()
 }

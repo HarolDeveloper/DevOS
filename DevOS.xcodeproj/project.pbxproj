@@ -3,14 +3,20 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		65D176722DC06978008159AC /* CarouselItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D176712DC06978008159AC /* CarouselItem.swift */; };
 		65D176742DC06A64008159AC /* CarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D176732DC06A64008159AC /* CarouselView.swift */; };
 		65D176762DC06BE8008159AC /* CarouselItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D176752DC06BE8008159AC /* CarouselItemView.swift */; };
+		A04DE6D82DF1AE5000797D42 /* VisitPlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04DE6D72DF1AE5000797D42 /* VisitPlannerView.swift */; };
+		A04DE6DA2DF2254300797D42 /* RouteSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04DE6D92DF2254300797D42 /* RouteSheetView.swift */; };
+		A04DE6E22DF6773C00797D42 /* ZonaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04DE6E12DF6773C00797D42 /* ZonaService.swift */; };
+		A04DE6E42DF6777A00797D42 /* PreferenciaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04DE6E32DF6777A00797D42 /* PreferenciaService.swift */; };
+		A04DE6E62DF6781500797D42 /* VisitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04DE6E52DF6781500797D42 /* VisitModels.swift */; };
 		A08871832DCD7C6400E542FC /* ExperienceTitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08871822DCD7C6400E542FC /* ExperienceTitles.swift */; };
+		A0C945582DE90EDF00737DDF /* MapKitUIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C945572DE90EDF00737DDF /* MapKitUIViewRepresentable.swift */; };
 		A229351B2DD55C4B0012FC6E /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A229351A2DD55C4B0012FC6E /* CameraViewModel.swift */; };
 		A22935242DD56FC10012FC6E /* MyWalletClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A22935232DD56FC10012FC6E /* MyWalletClassifier.mlmodel */; };
 		A22935262DD5701D0012FC6E /* ZonaClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22935252DD5701A0012FC6E /* ZonaClassifier.swift */; };
@@ -56,7 +62,13 @@
 		65D176712DC06978008159AC /* CarouselItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselItem.swift; sourceTree = "<group>"; };
 		65D176732DC06A64008159AC /* CarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselView.swift; sourceTree = "<group>"; };
 		65D176752DC06BE8008159AC /* CarouselItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselItemView.swift; sourceTree = "<group>"; };
+		A04DE6D72DF1AE5000797D42 /* VisitPlannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisitPlannerView.swift; sourceTree = "<group>"; };
+		A04DE6D92DF2254300797D42 /* RouteSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSheetView.swift; sourceTree = "<group>"; };
+		A04DE6E12DF6773C00797D42 /* ZonaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonaService.swift; sourceTree = "<group>"; };
+		A04DE6E32DF6777A00797D42 /* PreferenciaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenciaService.swift; sourceTree = "<group>"; };
+		A04DE6E52DF6781500797D42 /* VisitModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisitModels.swift; sourceTree = "<group>"; };
 		A08871822DCD7C6400E542FC /* ExperienceTitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceTitles.swift; sourceTree = "<group>"; };
+		A0C945572DE90EDF00737DDF /* MapKitUIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapKitUIViewRepresentable.swift; path = DevOS/MapKitUIViewRepresentable.swift; sourceTree = SOURCE_ROOT; };
 		A229351A2DD55C4B0012FC6E /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		A22935232DD56FC10012FC6E /* MyWalletClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MyWalletClassifier.mlmodel; sourceTree = "<group>"; };
 		A22935252DD5701A0012FC6E /* ZonaClassifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonaClassifier.swift; sourceTree = "<group>"; };
@@ -92,6 +104,10 @@
 		F69370192DC16F84006494B6 /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		F693701B2DCD8093006494B6 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A0C945542DE90CCD00737DDF /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A2F0A54C2DBC293400D53638 /* Frameworks */ = {
@@ -168,6 +184,7 @@
 		A2F0A5512DBC293400D53638 /* DevOS */ = {
 			isa = PBXGroup;
 			children = (
+				A0C945542DE90CCD00737DDF /* Resources */,
 				A237A1232DC1748B00B18607 /* ViewModels */,
 				A237A11A2DC1716E00B18607 /* Services */,
 				A237A1132DC1704500B18607 /* Models */,
@@ -178,6 +195,8 @@
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
 				A237A1212DC1747600B18607 /* MainView.swift */,
+				A04DE6D92DF2254300797D42 /* RouteSheetView.swift */,
+				A04DE6D72DF1AE5000797D42 /* VisitPlannerView.swift */,
 				65D176732DC06A64008159AC /* CarouselView.swift */,
 				A271A3582DD67E24005A4AB2 /* CarouselPopupView.swift */,
 				65D176752DC06BE8008159AC /* CarouselItemView.swift */,
@@ -199,6 +218,7 @@
 				F69370192DC16F84006494B6 /* Tab.swift */,
 				F69370152DC16CA4006494B6 /* HomeView.swift */,
 				F69370172DC16CAD006494B6 /* MapView.swift */,
+				A0C945572DE90EDF00737DDF /* MapKitUIViewRepresentable.swift */,
 				F69370132DC16C96006494B6 /* CameraView.swift */,
 				F693701B2DCD8093006494B6 /* OnboardingView.swift */,
 				F611BC2C2DEE410C0060E6B3 /* OnboardingFlow.swift */,
@@ -206,6 +226,9 @@
 				F611BC342DEE42E70060E6B3 /* AcompanantesView.swift */,
 				F611BC302DEE41A80060E6B3 /* PreferenciaVisita.swift */,
 				F633C7892DCD988D000878E3 /* LoadingView.swift */,
+				A04DE6E12DF6773C00797D42 /* ZonaService.swift */,
+				A04DE6E32DF6777A00797D42 /* PreferenciaService.swift */,
+				A04DE6E52DF6781500797D42 /* VisitModels.swift */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -224,6 +247,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A0C945542DE90CCD00737DDF /* Resources */,
 			);
 			name = DevOS;
 			productName = DevOS;
@@ -283,13 +309,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A04DE6E42DF6777A00797D42 /* PreferenciaService.swift in Sources */,
 				EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */,
 				EA812F062DCDB53800EEFB6B /* ForgotPasswordView.swift in Sources */,
 				A271A3512DD67D58005A4AB2 /* SeccionesPopupView.swift in Sources */,
 				A08871832DCD7C6400E542FC /* ExperienceTitles.swift in Sources */,
 				A2B0EEE72DD8562400A43357 /* Instrument.swift in Sources */,
+				A0C945582DE90EDF00737DDF /* MapKitUIViewRepresentable.swift in Sources */,
 				A271A3532DD67D76005A4AB2 /* SearchView.swift in Sources */,
 				A271A3592DD67E24005A4AB2 /* CarouselPopupView.swift in Sources */,
+				A04DE6DA2DF2254300797D42 /* RouteSheetView.swift in Sources */,
+				A04DE6D82DF1AE5000797D42 /* VisitPlannerView.swift in Sources */,
 				F69370102DC16715006494B6 /* NavBarView.swift in Sources */,
 				F69370182DC16CAD006494B6 /* MapView.swift in Sources */,
 				F69370162DC16CA4006494B6 /* HomeView.swift in Sources */,
@@ -297,6 +327,7 @@
 				F611BC352DEE42E70060E6B3 /* AcompanantesView.swift in Sources */,
 				A271A3552DD67D8E005A4AB2 /* DetailView.swift in Sources */,
 				A22935262DD5701D0012FC6E /* ZonaClassifier.swift in Sources */,
+				A04DE6E62DF6781500797D42 /* VisitModels.swift in Sources */,
 				F69370142DC16C96006494B6 /* CameraView.swift in Sources */,
 				F611BC332DEE42BC0060E6B3 /* RestriccionesView.swift in Sources */,
 				A229351B2DD55C4B0012FC6E /* CameraViewModel.swift in Sources */,
@@ -308,6 +339,7 @@
 				F633C78A2DCD988D000878E3 /* LoadingView.swift in Sources */,
 				A237A11E2DC171BC00B18607 /* InstrumentService.swift in Sources */,
 				A237A11C2DC171AD00B18607 /* AuthService.swift in Sources */,
+				A04DE6E22DF6773C00797D42 /* ZonaService.swift in Sources */,
 				A237A1272DC1792800B18607 /* UserService.swift in Sources */,
 				A237A1192DC1711300B18607 /* AuthResponse.swift in Sources */,
 				65D176722DC06978008159AC /* CarouselItem.swift in Sources */,
