@@ -6,9 +6,7 @@ struct SecurityView: View {
     @State private var isPasswordVisible = false
     @State private var isSaving = false
     @State private var message: String?
-
-    // Simulación del correo actual (reemplázalo con tu modelo real)
-    let emailActual = "pruebaemail@gmail.com"
+    @State private var emailActual: String = ""
 
     var body: some View {
         ScrollView {
@@ -26,7 +24,7 @@ struct SecurityView: View {
                         .cornerRadius(12)
                         .foregroundColor(.gray)
 
-                    // Campo de contraseña con opción de mostrar/ocultar
+                    // Campo de contraseña
                     ZStack(alignment: .trailing) {
                         Group {
                             if isPasswordVisible {
@@ -61,12 +59,11 @@ struct SecurityView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(Color(red: 0.996, green: 0.486, blue: 0.251))
                             .cornerRadius(10)
                     }
                 }
 
-                // Mensaje de estado
                 if let message = message {
                     Text(message)
                         .font(.subheadline)
@@ -89,9 +86,20 @@ struct SecurityView: View {
                 }) {
                     HStack {
                         Image(systemName: "chevron.left")
-                        Text("Volver")
+                        Text("Atrás")
                     }
                     .foregroundColor(.black)
+                }
+            }
+        }
+        .onAppear {
+            Task {
+                do {
+                    let session = try await SupabaseManager.shared.client.auth.session
+                    let user = session.user
+                    emailActual = user.email ?? "Correo no disponible"
+                } catch {
+                    emailActual = "Error al obtener el correo"
                 }
             }
         }
