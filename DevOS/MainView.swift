@@ -10,11 +10,17 @@ import SwiftUI
 struct MainView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject var authViewModel = AuthViewModel()
-    
+
     var body: some View {
         Group {
-            if authViewModel.isLoggedIn {
-              NavBarView()
+            if authViewModel.isInitializing {
+                LoadingView()
+            } else if authViewModel.isLoggedIn {
+                if authViewModel.hasCompletedOnboarding {
+                    NavBarView()
+                } else {
+                    OnboardingFlowView()
+                }
             } else {
                 LoginView()
             }
