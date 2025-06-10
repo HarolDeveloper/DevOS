@@ -21,7 +21,9 @@ struct OnboardingFlowView: View {
     @State private var restriccionActividadAlta = false
     @State private var intereses: [String] = []
     @State private var selectedTags: Set<String> = []
-
+    
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var showErrorAcompanantes = false
     @State private var showErrorActividad = false
     
@@ -85,22 +87,26 @@ struct OnboardingFlowView: View {
                             
                             // Botón dentro del fondo blanco
                             HStack(spacing: 16) {
-                                if currentPage > 0 {
-                                    Button(action: {
+                                Button(action: {
+                                    if currentPage == 0 {
+                                        Task {
+                                            await authViewModel.signOut()
+                                        }
+                                    } else {
                                         currentPage -= 1
-                                    }) {
-                                        Text("Atrás")
-                                            .font(.headline)
-                                            .foregroundColor(Color(red: 0.996, green: 0.486, blue: 0.251))
-                                            .padding()
-                                            .frame(maxWidth: .infinity)
-                                            .background(Color.white)
-                                            .cornerRadius(20)
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 20)
-                                                    .stroke(Color.orange, lineWidth: 2)
-                                            )
                                     }
+                                }) {
+                                    Text(currentPage == 0 ? "Salir" : "Atrás")
+                                        .font(.headline)
+                                        .foregroundColor(Color(red: 0.996, green: 0.486, blue: 0.251))
+                                        .padding()
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.white)
+                                        .cornerRadius(20)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .stroke(Color.orange, lineWidth: 2)
+                                        )
                                 }
                                 
                                 Button(action: {
