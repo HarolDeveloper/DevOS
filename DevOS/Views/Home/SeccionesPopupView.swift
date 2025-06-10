@@ -14,11 +14,30 @@ struct SectionsPopupView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topTrailing) {
-                Image(item.imageName)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: 360, minHeight: 200, maxHeight: 200)
-                    .clipped()
+                AsyncImage(url: URL(string: item.imageName)) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(height: 100)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(1.6, contentMode: .fill)
+                            .frame(height: 100)
+                            .clipped()
+                            .cornerRadius(10)
+                    case .failure:
+                        Image("placeholder_zona")
+                            .resizable()
+                            .aspectRatio(1.6, contentMode: .fill)
+                            .frame(height: 100)
+                            .clipped()
+                            .cornerRadius(10)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+
 
                 Button(action: onClose) {
                     Image(systemName: "xmark.circle.fill")
