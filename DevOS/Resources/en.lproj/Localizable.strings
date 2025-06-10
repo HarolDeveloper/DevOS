@@ -1,0 +1,29 @@
+/*
+  Localizable.strings
+  DevOS
+
+  Created by Juan Daniel Vázquez Alonso on 28/05/25.
+  
+*/
+
+accessibility = "Accessibility";
+privacy = "Privacy";
+support = "Support";
+settings = "Settings";
+session = "Session";
+language = "Language";
+security = "Security and privacy";
+feedback = "Feedback";
+logout = "Log out";
+logout_title = "Log out";
+logout_msg = "Are you sure you want to log out?";
+logout_confirm = "Log out";
+logout_cancel = "Cancel";
+english = "English";
+spanish = "Spanish";
+feedback = "Feedback";
+feedback_title = "Share your opinion about the museum";
+feedback_message = "Write a message";
+feedback_send = "Send";
+back = "Back";
+security_and_privacy = "Security and privacy";

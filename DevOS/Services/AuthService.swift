@@ -61,7 +61,10 @@ class AuthService: ObservableObject {
         self.user = nil
         self.usuario = nil
     }
-
+    
+    func cambiarContrasena(nueva: String) async throws {
+        try await supabase.auth.update(user: UserAttributes(password: nueva))
+    }
 
     func refreshSession() async {
         do {

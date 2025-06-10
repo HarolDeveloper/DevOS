@@ -10,16 +10,42 @@ import SwiftUI
 struct RouteCardView: View {
     var number: String
     var title: String
-    var image: String
+    var imageURL: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Image(systemName: "photo") // Reemplaza con imagen real si aplica
-                .resizable()
-                .scaledToFill()
-                .frame(width: 180, height: 110)
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(14)
+            if let urlString = imageURL, let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(width: 180, height: 110)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 180, height: 110)
+                            .clipped()
+                            .cornerRadius(14)
+                    case .failure:
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 180, height: 110)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(14)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 180, height: 110)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(14)
+            }
 
             Text(number)
                 .font(.subheadline)
@@ -51,9 +77,8 @@ struct RouteSheetView: View {
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 20) {
-                        RouteCardView(number: "#1", title: "Galería de historia", image: "historia")
-                        RouteCardView(number: "#2", title: "Reacción en Cadena", image: "ciencia")
-                        // Puedes agregar más tarjetas aquí
+                        RouteCardView(number: "#1", title: "Galería de historia", imageURL: nil)
+                        RouteCardView(number: "#2", title: "Reacción en Cadena", imageURL: nil)
                     }
                     .padding(.horizontal)
                 }
@@ -111,11 +136,12 @@ struct RouteSheetView: View {
             selection: $selectedDetent
         )
         .interactiveDismissDisabled()
-        .onChange(of: selectedDetent) { newValue in
+        .onChange(of: selectedDetent) { oldValue, newValue in
             withAnimation {
                 isCollapsed = newValue == .fraction(0.15)
             }
         }
+
         .onAppear {
             isCollapsed = false
             selectedDetent = .fraction(0.4)
