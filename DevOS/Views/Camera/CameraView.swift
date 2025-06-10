@@ -27,7 +27,7 @@ struct CameraView: View {
                         .frame(width: 72, height: 72)
                         .foregroundColor(.white)
                         .shadow(radius: 8)
-                        .padding(.bottom, 30)
+                        .padding(.bottom, 48)
                 }
             }
         }
