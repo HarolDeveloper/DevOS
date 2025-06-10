@@ -9,8 +9,10 @@ import Foundation
 import Supabase
 
 final class ZonaService {
+    private let client = SupabaseManager.shared.client
     static let shared = ZonaService()
-
+    @Published var zonas: [Zona] = []
+    
     func obtenerTodasZonas() async throws -> [Zona] {
         let client = SupabaseManager.shared.client
 
@@ -20,5 +22,19 @@ final class ZonaService {
             .execute()
 
         return response.value
+    }
+    
+    // Leer zonas
+    func fetchZonas() async {
+        do {
+            let zonas: [Zona] = try await client
+                .from("zona")
+                .select()
+                .execute()
+                .value
+            self.zonas = zonas
+        } catch {
+            print("❌ Error fetching instruments: \(error)")
+        }
     }
 }

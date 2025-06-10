@@ -13,7 +13,7 @@ class ZonaClassifier {
     private let model: VNCoreMLModel
 
     init?() {
-        guard let mlModel = try? MyWalletClassifier(configuration: MLModelConfiguration()).model,
+        guard let mlModel = try? ZonaClassifierML(configuration: MLModelConfiguration()).model,
               let visionModel = try? VNCoreMLModel(for: mlModel) else {
             print("❌ Error cargando el modelo")
             return nil

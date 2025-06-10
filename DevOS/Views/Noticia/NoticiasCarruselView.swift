@@ -1,24 +1,24 @@
 //
-//  CarouselView.swift
+//  NoticiasCarruselView.swift
 //  DevOS
 //
-//  Created by Juan Daniel Vázquez Alonso on 28/04/25.
+//  Created by Juan Daniel Vázquez Alonso on 08/06/25.
 //
 
 import SwiftUI
 
-struct CarouselView: View {
-    let items: [CarouselItem]
-    let onTap: (CarouselItem) -> Void
+struct NoticiaCarouselView: View {
+    let noticias: [Noticia]
+    let onTap: (Noticia) -> Void
     @State private var currentIndex: Int = 0
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             TabView(selection: $currentIndex) {
-                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                    CarouselItemView(item: item)
+                ForEach(Array(noticias.enumerated()), id: \.element.id) { index, noticia in
+                    NoticiaCarouselItemView(noticia: noticia)
                         .onTapGesture {
-                            onTap(item)
+                            onTap(noticia)
                         }
                         .tag(index)
                 }
@@ -28,27 +28,26 @@ struct CarouselView: View {
             .cornerRadius(10)
 
             HStack {
-                Text(items[currentIndex].title)
+                Text(noticias[currentIndex].titulo ?? "Sin título")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.black.opacity(0.5))
+                    .background(Color.orange.opacity(0.5))
                     .cornerRadius(8)
 
-                    Spacer()
+                Spacer()
 
-                    HStack(spacing: 6) {
-                        ForEach(0..<items.count, id: \.self) { index in
-                            Circle()
+                HStack(spacing: 6) {
+                    ForEach(0..<noticias.count, id: \.self) { index in
+                        Circle()
                             .fill(index == currentIndex ? Color.white : Color.white.opacity(0.5))
                             .frame(width: 8, height: 8)
-                            }
-                        }
+                    }
                 }
-                .padding(12)
             }
+            .padding(12)
         }
+    }
 }
-

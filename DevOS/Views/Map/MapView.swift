@@ -149,37 +149,16 @@ struct MinimizedExperienceView: View {
 
 struct RouteCardsScrollView: View {
     let rutaSugerida: [Zona]
-    @Binding var selectedExperienceID: UUID? // Agregar binding
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
                 ForEach(Array(rutaSugerida.enumerated()), id: \.element.id) { index, zona in
-                    // Buscar la experiencia correspondiente a esta zona
-                    if let experience = ExperienceData.all.first(where: { experience in
-                        zona.nombre.lowercased().contains(experience.title.lowercased()) ||
-                        experience.title.lowercased().contains(zona.nombre.lowercased())
-                    }) {
-                        RouteCardView(
-                            number: "#\(index + 1)",
-                            title: zona.nombre,
-                            emoji: experience.emoji,
-                            imageURL: zona.imageURL,
-                            isSelected: selectedExperienceID == experience.id,
-                            onTap: {
-                                selectedExperienceID = experience.id
-                            }
-                        )
-                    } else {
-                        RouteCardView(
-                            number: "#\(index + 1)",
-                            title: zona.nombre,
-                            emoji: "📍", // Emoji por defecto
-                            imageURL: zona.imageURL,
-                            isSelected: false,
-                            onTap: nil
-                        )
-                    }
+                    RouteCardView(
+                        number: "#\(index + 1)",
+                        title: zona.nombre,
+                        imageURL: zona.imageURL
+                    )
                 }
             }
             .padding(.horizontal)
@@ -212,7 +191,6 @@ struct RouteControlsView: View {
 struct RouteView: View {
     let rutaSugerida: [Zona]
     let estimatedTime: String
-    @Binding var selectedExperienceID: UUID? // Agregar binding
     let onExit: () -> Void
     
     var body: some View {
@@ -221,10 +199,7 @@ struct RouteView: View {
                 .font(.title2)
                 .bold()
             
-            RouteCardsScrollView(
-                rutaSugerida: rutaSugerida,
-                selectedExperienceID: $selectedExperienceID // Pasar el binding
-            )
+            RouteCardsScrollView(rutaSugerida: rutaSugerida)
             
             RouteControlsView(estimatedTime: estimatedTime, onExit: onExit)
             
@@ -232,10 +207,6 @@ struct RouteView: View {
         }
         .padding(.horizontal)
         .padding(.top, 12)
-        .safeAreaInset(edge: .bottom) {
-            // Espacio para el navbar
-            Color.clear.frame(height: 20)
-        }
     }
 }
 
@@ -282,9 +253,8 @@ class MapViewModel: ObservableObject {
     @Published var showRoute = false
     @Published var estimatedTime = "30 min"
     @Published var displayType: BottomSheetDisplayType = .minimized
-    @Published var routeDisplayType: BottomSheetDisplayType = .fraction(0.55)
+    @Published var routeDisplayType: BottomSheetDisplayType = .fraction(0.4)
     @Published var rutaSugerida: [Zona] = []
-    @Published var activeRoute: Route? = nil // Nueva propiedad para la ruta activa
     
     var filteredExperiences: [Experience] {
         ExperienceData.all
@@ -296,7 +266,6 @@ class MapViewModel: ObservableObject {
     
     func exitRoute() {
         showRoute = false
-        activeRoute = nil // Limpiar la ruta activa al salir
         displayType = .fraction(0.4)
     }
     
@@ -309,32 +278,10 @@ class MapViewModel: ObservableObject {
                 
                 await MainActor.run {
                     self.rutaSugerida = ruta
-                    // Crear la ruta activa basada en las zonas calculadas
-                    self.createActiveRoute(from: ruta)
                 }
             } catch {
                 print("❌ Error al calcular ruta:", error)
             }
-        }
-    }
-    
-    // Función para crear una ruta activa basada en las zonas calculadas
-    private func createActiveRoute(from zonas: [Zona]) {
-        // Mapear las zonas a experienceIDs
-        let experienceIDs = zonas.compactMap { zona -> UUID? in
-            // Buscar la experiencia que corresponde a esta zona
-            return ExperienceData.all.first { experience in
-                zona.nombre.lowercased().contains(experience.title.lowercased()) ||
-                experience.title.lowercased().contains(zona.nombre.lowercased())
-            }?.id
-        }
-        
-        if !experienceIDs.isEmpty {
-            activeRoute = Route(
-                name: "Ruta Calculada",
-                experienceIDs: experienceIDs,
-                estimatedTime: estimatedTime
-            )
         }
     }
 }
@@ -355,8 +302,7 @@ struct MapView: View {
             // Map
             MapKitUIViewRepresentable(
                 region: mapRegion,
-                selectedExperienceID: $viewModel.selectedExperienceID,
-                activeRoute: $viewModel.activeRoute // Agregar el parámetro que faltaba
+                selectedExperienceID: $viewModel.selectedExperienceID
             )
             .edgesIgnoringSafeArea(.all)
             
@@ -390,7 +336,6 @@ struct MapView: View {
                         RouteView(
                             rutaSugerida: viewModel.rutaSugerida,
                             estimatedTime: viewModel.estimatedTime,
-                            selectedExperienceID: $viewModel.selectedExperienceID, // Pasar el binding
                             onExit: viewModel.exitRoute
                         )
                     } else {
@@ -407,7 +352,7 @@ struct MapView: View {
             )
         }
         .onAppear {
-            viewModel.routeDisplayType = .fraction(0.55)
+            viewModel.routeDisplayType = .fraction(0.4)
         }
     }
 }
@@ -519,7 +464,7 @@ struct BottomSheetAdvanceView<Content: View>: View {
                         let velocity = value.predictedEndLocation.y - value.location.y
                         let translation = value.translation.height
                         if translation < -50 || velocity < -200 {
-                            displayType = .fraction(0.55)
+                            displayType = .fraction(0.4)
                         } else {
                             displayType = .minimized
                         }
