@@ -23,7 +23,7 @@ struct SectionsPopupView: View {
                         image
                             .resizable()
                             .aspectRatio(1.6, contentMode: .fill)
-                            .frame(height: 100)
+                            .frame(maxWidth: 360, minHeight: 200, maxHeight: 200)
                             .clipped()
                             .cornerRadius(10)
                     case .failure:

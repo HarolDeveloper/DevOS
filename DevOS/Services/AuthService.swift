@@ -73,6 +73,7 @@ class AuthService: ObservableObject {
             self.user = session.user
             try await obtenerUsuario()
         } catch {
+            print("⚠️ La sesión expiró o no es válida. Limpiando estado.")
             self.session = nil
             self.user = nil
             self.usuario = nil

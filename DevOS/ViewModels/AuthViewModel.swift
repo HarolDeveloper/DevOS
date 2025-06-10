@@ -70,14 +70,21 @@ class AuthViewModel: ObservableObject {
 
         do {
             try await authService.signOut()
-            isLoggedIn = false
-            hasCompletedOnboarding = false
+            await MainActor.run {
+                hasCompletedOnboarding = false
+                isLoggedIn = false
+                email = ""
+                password = ""
+            }
         } catch {
-            errorMessage = "Error al cerrar sesión: \(error.localizedDescription)"
+            await MainActor.run {
+                errorMessage = "Error al cerrar sesión: \(error.localizedDescription)"
+            }
         }
 
         isLoading = false
     }
+
 
     func refreshSession() async {
         await authService.refreshSession()

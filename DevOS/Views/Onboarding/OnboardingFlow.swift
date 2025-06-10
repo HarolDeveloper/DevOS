@@ -9,6 +9,8 @@ import SwiftUI
 
 struct OnboardingFlowView: View {
     @State private var currentPage = 0
+    @State private var shouldGoToLogin = false
+
 
     // Datos compartidos
     @State private var tipoAcompanantes = ""
@@ -133,9 +135,22 @@ struct OnboardingFlowView: View {
                     }
                     .frame(maxHeight: .infinity)
                 }
+                
             }
+            
             .navigationDestination(isPresented: $goToHome) {
                 NavBarView().navigationBarBackButtonHidden(true)
+            }
+            .navigationDestination(isPresented: $shouldGoToLogin) {
+                LoginView()
+            }
+
+
+        }
+        .onAppear {
+            if AuthService.shared.user == nil {
+                print("⚠️ No hay usuario, regresando a login")
+                shouldGoToLogin = true
             }
         }
     }
