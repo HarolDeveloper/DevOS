@@ -14,6 +14,12 @@ struct Zona: Codable, Identifiable {
     let categorias: [String]
     let nivel: Int
     let duracion: Int // en minutos
+    let imageURL: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, nombre, actividad, categorias, nivel, duracion
+        case imageURL = "imagen_url"
+    }
 }
 
 struct Visita: Codable {

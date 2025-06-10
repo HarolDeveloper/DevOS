@@ -15,16 +15,42 @@ struct NamedPolygon: Identifiable {
     let polygon: MKPolygon
 }
 
+// MARK: - Definición de rutas
+struct Route {
+    let id: UUID = UUID()
+    let name: String
+    let experienceIDs: [UUID] // IDs de las experiencias en orden
+    let estimatedTime: String
+}
+
+// MARK: - Datos de rutas (puedes mover esto a otro archivo)
+struct RouteData {
+    static let routes: [Route] = [
+        Route(
+            name: "Ruta Historia y Ciencia",
+            experienceIDs: [
+                // Aquí van los UUIDs de las experiencias en el orden deseado
+                // Ejemplo: UUID de "Galería de historia", UUID de "Reacción en Cadena"
+            ],
+            estimatedTime: "30 min"
+        ),
+        // Agrega más rutas aquí
+    ]
+}
+
 // MARK: - Anotación personalizada
 class CustomPointAnnotation: MKPointAnnotation {
     var emoji: String = ""
     var number: String = ""
     var experienceID: UUID?
+    var isInActiveRoute: Bool = false
+    var routePosition: Int? = nil // Posición en la ruta activa
 }
 
 struct MapKitUIViewRepresentable: UIViewRepresentable {
     var region: MKCoordinateRegion
     @Binding var selectedExperienceID: UUID?
+    @Binding var activeRoute: Route? // Nueva binding para la ruta activa
     static var namedPolygons: [NamedPolygon] = []
 
     static func resetPolygons() {
@@ -44,6 +70,9 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        // Actualizar numeración cuando cambie la ruta activa
+        updateAnnotationNumbering(in: uiView)
+        
         // Actualizar la selección cuando cambie selectedExperienceID
         if let selectedID = selectedExperienceID {
             selectAnnotation(for: selectedID, in: uiView)
@@ -55,20 +84,54 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
         }
     }
     
+    private func updateAnnotationNumbering(in mapView: MKMapView) {
+        for annotation in mapView.annotations {
+            guard let customAnnotation = annotation as? CustomPointAnnotation else { continue }
+            
+            if let activeRoute = activeRoute,
+               let experienceID = customAnnotation.experienceID,
+               let routeIndex = activeRoute.experienceIDs.firstIndex(of: experienceID) {
+                // Este punto está en la ruta activa
+                customAnnotation.isInActiveRoute = true
+                customAnnotation.routePosition = routeIndex + 1
+                customAnnotation.number = "#\(routeIndex + 1)"
+            } else {
+                // Este punto no está en la ruta activa
+                customAnnotation.isInActiveRoute = false
+                customAnnotation.routePosition = nil
+                customAnnotation.number = "" // Sin número
+            }
+        }
+        
+        // Refrescar las vistas de las anotaciones
+        for annotation in mapView.annotations {
+            if let annotationView = mapView.view(for: annotation) {
+                updateAnnotationView(annotationView, for: annotation as? CustomPointAnnotation)
+            }
+        }
+    }
+    
+    private func updateAnnotationView(_ annotationView: MKAnnotationView, for customAnnotation: CustomPointAnnotation?) {
+        guard let customAnnotation = customAnnotation else { return }
+        
+        let isSelected = annotationView.isSelected
+        let scale: CGFloat = isSelected ? 1.2 : 0.75
+        
+        annotationView.image = Coordinator.generateEmojiMarkerImage(
+            emoji: customAnnotation.emoji,
+            number: customAnnotation.number,
+            scale: scale,
+            isInRoute: customAnnotation.isInActiveRoute
+        )
+        annotationView.centerOffset = CGPoint(x: 0, y: -46 * scale)
+    }
+    
     private func selectAnnotation(for experienceID: UUID, in mapView: MKMapView) {
         // Encontrar la anotación correspondiente y seleccionarla
         for annotation in mapView.annotations {
             if let customAnnotation = annotation as? CustomPointAnnotation,
                customAnnotation.experienceID == experienceID {
                 mapView.selectAnnotation(customAnnotation, animated: true)
-                
-                // Comentado: No cambiar el zoom/región del mapa
-                // let region = MKCoordinateRegion(
-                //     center: customAnnotation.coordinate,
-                //     latitudinalMeters: 500,
-                //     longitudinalMeters: 500
-                // )
-                // mapView.setRegion(region, animated: true)
                 break
             }
         }
@@ -112,7 +175,12 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
             }
 
             let scale: CGFloat = 0.75
-            annotationView?.image = generateEmojiMarkerImage(emoji: customAnnotation.emoji, number: customAnnotation.number, scale: scale)
+            annotationView?.image = Coordinator.generateEmojiMarkerImage(
+                emoji: customAnnotation.emoji,
+                number: customAnnotation.number,
+                scale: scale,
+                isInRoute: customAnnotation.isInActiveRoute
+            )
             annotationView?.centerOffset = CGPoint(x: 0, y: -46 * scale)
 
             return annotationView
@@ -127,18 +195,30 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
             }
             
             let scale: CGFloat = 1.2
-            view.image = generateEmojiMarkerImage(emoji: customAnnotation.emoji, number: customAnnotation.number, scale: scale)
+            view.image = Coordinator.generateEmojiMarkerImage(
+                emoji: customAnnotation.emoji,
+                number: customAnnotation.number,
+                scale: scale,
+                isInRoute: customAnnotation.isInActiveRoute
+            )
             view.centerOffset = CGPoint(x: 0, y: -46 * scale)
         }
 
         func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
             guard let custom = view.annotation as? CustomPointAnnotation else { return }
             let scale: CGFloat = 0.75
-            view.image = generateEmojiMarkerImage(emoji: custom.emoji, number: custom.number, scale: scale)
+            view.image = Coordinator.generateEmojiMarkerImage(
+                emoji: custom.emoji,
+                number: custom.number,
+                scale: scale,
+                isInRoute: custom.isInActiveRoute
+            )
             view.centerOffset = CGPoint(x: 0, y: -46 * scale)
+
+            parent.selectedExperienceID = nil
         }
 
-        private func generateEmojiMarkerImage(emoji: String, number: String, scale: CGFloat = 1.0) -> UIImage? {
+        static func generateEmojiMarkerImage(emoji: String, number: String, scale: CGFloat = 1.0, isInRoute: Bool = false) -> UIImage? {
             let baseSize = CGSize(width: 90, height: 93)
             let size = CGSize(width: baseSize.width * scale, height: baseSize.height * scale)
             let renderer = UIGraphicsImageRenderer(size: size)
@@ -147,7 +227,10 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
                 let ctx = context.cgContext
                 ctx.scaleBy(x: scale, y: scale)
 
-                // Fondo rosa (forma personalizada tipo pin)
+                // Color del pin basado en si está en ruta o no
+                let pinColor = isInRoute ? UIColor.systemBlue : UIColor.systemGray
+
+                // Fondo del pin (forma personalizada tipo pin)
                 let pinPath = UIBezierPath()
                 pinPath.move(to: CGPoint(x: 46.644, y: 90.6271))
                 pinPath.addLine(to: CGPoint(x: 8.20361, y: 39.889))
@@ -160,11 +243,11 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
                                  controlPoint2: CGPoint(x: 82.7153, y: 38.5626))
                 pinPath.addLine(to: CGPoint(x: 46.644, y: 90.6271))
                 pinPath.close()
-                UIColor.systemPink.setFill()
+                pinColor.setFill()
                 pinPath.fill()
 
-                // Círculo rosa debajo
-                ctx.setFillColor(UIColor.systemPink.cgColor)
+                // Círculo del pin
+                ctx.setFillColor(pinColor.cgColor)
                 ctx.fillEllipse(in: CGRect(x: 5, y: 0, width: 80, height: 80))
 
                 // Forma blanca interior
@@ -198,19 +281,21 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
                     y: 14
                 ))
 
-                // Número
-                let numberAttr = NSAttributedString(
-                    string: number,
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 16, weight: .medium),
-                        .foregroundColor: UIColor.darkGray
-                    ]
-                )
-                let numberSize = numberAttr.size()
-                numberAttr.draw(at: CGPoint(
-                    x: (baseSize.width - numberSize.width) / 2,
-                    y: 50
-                ))
+                // Número (solo si está en ruta y tiene número)
+                if isInRoute && !number.isEmpty {
+                    let numberAttr = NSAttributedString(
+                        string: number,
+                        attributes: [
+                            .font: UIFont.systemFont(ofSize: 16, weight: .medium),
+                            .foregroundColor: UIColor.darkGray
+                        ]
+                    )
+                    let numberSize = numberAttr.size()
+                    numberAttr.draw(at: CGPoint(
+                        x: (baseSize.width - numberSize.width) / 2,
+                        y: 50
+                    ))
+                }
             }
         }
     }
@@ -222,7 +307,6 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
             let data = try Data(contentsOf: url)
             let features = try MKGeoJSONDecoder().decode(data)
 
-            var count = 1
             for feature in features {
                 guard let geoFeature = feature as? MKGeoJSONFeature else { continue }
 
@@ -242,7 +326,8 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
                         annotation.coordinate = shape.coordinate
                         annotation.title = name
                         annotation.emoji = emojiFor(name: name)
-                        annotation.number = "#\(count)"
+                        annotation.number = "" // Inicialmente sin número
+                        annotation.isInActiveRoute = false
                         
                         // Asignar el experienceID basado en el nombre
                         if let matchedExperience = ExperienceData.all.first(where: {
@@ -252,7 +337,6 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
                         }
                         
                         mapView.addAnnotation(annotation)
-                        count += 1
                     }
                 }
             }
@@ -270,16 +354,39 @@ struct MapKitUIViewRepresentable: UIViewRepresentable {
 // MARK: - Vista SwiftUI para previsualización
 struct MapKitUIViewWrapper: View {
     @State private var selectedExperienceID: UUID? = nil
+    @State private var activeRoute: Route? = nil
     
     var body: some View {
-        MapKitUIViewRepresentable(
-            region: MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: 25.6763, longitude: -100.2828),
-                span: MKCoordinateSpan(latitudeDelta: 0.0012, longitudeDelta: 0.0012)
-            ),
-            selectedExperienceID: $selectedExperienceID
-        )
-        .edgesIgnoringSafeArea(.all)
+        VStack {
+            MapKitUIViewRepresentable(
+                region: MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 25.6763, longitude: -100.2828),
+                    span: MKCoordinateSpan(latitudeDelta: 0.0012, longitudeDelta: 0.0012)
+                ),
+                selectedExperienceID: $selectedExperienceID,
+                activeRoute: $activeRoute
+            )
+            .edgesIgnoringSafeArea(.all)
+            
+            // Botones de prueba para activar rutas
+            HStack {
+                Button("Activar Ruta") {
+                    activeRoute = RouteData.routes.first
+                }
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+                
+                Button("Limpiar Ruta") {
+                    activeRoute = nil
+                }
+                .padding()
+                .background(Color.gray)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+            }
+        }
     }
 }
 

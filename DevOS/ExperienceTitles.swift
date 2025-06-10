@@ -11,6 +11,7 @@ struct Experience: Identifiable {
     let id = UUID()
     let title: String
     let emoji: String
+
 }
 
 struct ExperienceData {
