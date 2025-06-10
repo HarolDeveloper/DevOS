@@ -90,8 +90,12 @@ struct OnboardingFlowView: View {
                                 Button(action: {
                                     if currentPage == 0 {
                                         Task {
-                                            await authViewModel.signOut()
+                                      
+                                            await MainActor.run {
+                                                      shouldGoToLogin = true
+                                                  }
                                         }
+                                        
                                     } else {
                                         currentPage -= 1
                                     }
