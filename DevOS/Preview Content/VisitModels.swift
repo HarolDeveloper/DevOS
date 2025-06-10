@@ -22,14 +22,6 @@ struct Visita: Codable {
     let tiempo_disponible: Int // en minutos
 }
 
-struct PreferenciaVisita: Codable {
-    let usuario_id: UUID
-    let actividad_preferida: String // "baja", "media", "alta"
-    let intereses: [String]
-    let restriccion_mayores: Bool
-    let restriccion_movilidad: Bool
-    let restriccion_actividad_alta: Bool
-}
 
 func calcularRutaOptima(
     zonas: [Zona],

@@ -207,24 +207,27 @@ struct MapView: View {
             }
         }
         .sheet(isPresented: $showPlanner) {
-            VisitPlannerView(
-                showRouteSheet: $showRoute,
-                estimatedTime: $estimatedTime,
-                usuarioId: UUID(),
-                onRutaCalculada: { visita in
-                    Task {
-                        do {
-                            let zonas = try await ZonaService.shared.obtenerTodasZonas()
-                            let preferencias = try await PreferenciaService.shared.obtenerPorUsuario(visita.usuario_id)
-                            let ruta = calcularRutaOptima(zonas: zonas, visita: visita, preferencias: preferencias)
-                            self.rutaSugerida = ruta
-                        } catch {
-                            print("❌ Error al calcular ruta:", error)
+            if let user = SupabaseManager.shared.client.auth.currentUser {
+                VisitPlannerView(
+                    showRouteSheet: $showRoute,
+                    estimatedTime: $estimatedTime,
+                    usuarioId: user.id,
+                    onRutaCalculada: { visita in
+                        Task {
+                            do {
+                                let zonas = try await ZonaService.shared.obtenerTodasZonas()
+                                let preferencias = try await PreferenciaService().obtenerPorUsuario(userId: user.id.uuidString)
+                                let ruta = calcularRutaOptima(zonas: zonas, visita: visita, preferencias: preferencias)
+                                self.rutaSugerida = ruta
+                            } catch {
+                                print("❌ Error al calcular ruta:", error)
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
         }
+
         .onAppear {
             routeDisplayType = .fraction(0.4)
         }

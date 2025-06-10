@@ -450,7 +450,7 @@ struct VisitPlannerView: View {
 
                 let visita = Visita(
                     id: UUID(),
-                    usuario_id: UUID(),
+                    usuario_id: usuarioId,
                     tiempo_disponible: tiempo
                 )
 
