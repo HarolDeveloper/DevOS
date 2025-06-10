@@ -2,7 +2,7 @@
 //  PreferenciaVisita.swift
 //  DevOS
 //
-//  Created by Bernardo Caballero on 02/06/25.
+//  Created by Fernando Rocha on 09/06/25.
 //
 
 import SwiftUI

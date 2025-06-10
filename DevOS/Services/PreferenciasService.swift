@@ -11,7 +11,7 @@ import Supabase
 @MainActor
 class PreferenciaService: ObservableObject {
     private let client = SupabaseManager.shared.client
-
+    
     /// Guarda las preferencias de visita en Supabase
     func guardarPreferencias(preferencia: PreferenciaVisita) async throws {
         try await client
@@ -19,7 +19,7 @@ class PreferenciaService: ObservableObject {
             .insert([preferencia])
             .execute()
     }
-
+    
     /// Verifica si el usuario ya tiene preferencias registradas
     func verificarPreferenciasUsuario(userId: String) async throws -> Bool {
         do {
@@ -37,5 +37,21 @@ class PreferenciaService: ObservableObject {
             print("❌ Error al verificar preferencias para \(userId):", error.localizedDescription)
             return false
         }
+    }
+    
+    
+    func obtenerPorUsuario(userId: String) async throws -> PreferenciaVisita {
+        let preferencias: [PreferenciaVisita] = try await client
+            .from("preferenciavisita")
+            .select()
+            .eq("usuario_id", value: userId)
+            .execute()
+            .value
+
+        guard let preferencia = preferencias.first else {
+            throw NSError(domain: "PreferenciaService", code: 404, userInfo: [NSLocalizedDescriptionKey: "No se encontraron preferencias para el usuario."])
+        }
+
+        return preferencia
     }
 }
