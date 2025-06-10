@@ -1,5 +1,5 @@
 //
-//  NavBarView.swift
+///  NavBarView.swift
 //  DevOS
 //
 //  Created by Bernardo Caballero on 29/04/25.
@@ -71,7 +71,8 @@ struct NavBarView: View {
             .background(Color.black)
             .cornerRadius(20)
         }
-        .ignoresSafeArea()
+        .edgesIgnoringSafeArea(.bottom)
+        
     }
 }
 
