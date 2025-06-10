@@ -80,25 +80,30 @@ struct RouteSheetView: View {
     var onDismiss: () -> Void
 
     @State private var isCollapsed: Bool = false
-    @State private var selectedDetent: PresentationDetent = .fraction(0.55)
+    @State private var selectedDetent: PresentationDetent = .fraction(0.45)
 
     var body: some View {
-        VStack(spacing: 16) {
-            if !isCollapsed {
-                expandedContent
-            } else {
-                collapsedContent
+        VStack(spacing: 0) {
+            // Spacer para empujar el contenido hacia abajo
+            Spacer()
+                .frame(height: 40)
+            
+            VStack(spacing: 16) {
+                if !isCollapsed {
+                    expandedContent
+                } else {
+                    collapsedContent
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemBackground))
-        .padding(.top)
         .safeAreaInset(edge: .bottom) {
-            // Espacio para el navbar
-            Color.clear.frame(height: 20)
+            // Espacio mínimo para el navbar
+            Color.clear.frame(height: 8)
         }
         .presentationDetents(
-            [.fraction(0.15), .fraction(0.55)],
+            [.fraction(0.15), .fraction(0.45)],
             selection: $selectedDetent
         )
         .interactiveDismissDisabled()
@@ -109,7 +114,7 @@ struct RouteSheetView: View {
         }
         .onAppear {
             isCollapsed = false
-            selectedDetent = .fraction(0.55)
+            selectedDetent = .fraction(0.45)
         }
     }
     
@@ -119,13 +124,10 @@ struct RouteSheetView: View {
             Text("¡Sigue esta ruta!")
                 .font(.title2)
                 .bold()
-                .padding(.top, 4)
 
             routeCardsScrollView
             
             bottomActionBar
-            
-            Spacer()
         }
     }
     
@@ -211,6 +213,6 @@ struct RouteSheetView: View {
             .foregroundColor(.gray)
         }
         .padding(.horizontal)
-        .padding(.bottom, 20) // Reducir el padding
+        .padding(.bottom, 8)
     }
 }

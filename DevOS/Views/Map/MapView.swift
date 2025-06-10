@@ -135,6 +135,7 @@ struct MinimizedExperienceView: View {
                 .font(.title)
                 .foregroundColor(.gray)
                 .padding()
+                .fontWeight(.bold)
             
             DragToExpandWrapper {
                 Color.clear.frame(height: 1)
@@ -217,6 +218,10 @@ struct RouteView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            // Espacio extra en la parte superior
+            Spacer()
+                .frame(height: 20)
+            
             Text("¡Sigue esta ruta!")
                 .font(.title2)
                 .bold()
@@ -245,9 +250,10 @@ struct MinimizedRouteView: View {
     var body: some View {
         VStack(spacing: 16) {
             EstimatedTimeView(estimatedTime: estimatedTime)
-                .font(.title)
+                .font(.title2)
                 .foregroundColor(.gray)
                 .padding()
+                .fontWeight(.bold)
             
             DragToExpandWrapper {
                 Color.clear.frame(height: 1)
@@ -282,7 +288,7 @@ class MapViewModel: ObservableObject {
     @Published var showRoute = false
     @Published var estimatedTime = "30 min"
     @Published var displayType: BottomSheetDisplayType = .minimized
-    @Published var routeDisplayType: BottomSheetDisplayType = .fraction(0.55)
+    @Published var routeDisplayType: BottomSheetDisplayType = .fraction(0.35)
     @Published var rutaSugerida: [Zona] = []
     @Published var activeRoute: Route? = nil // Nueva propiedad para la ruta activa
     
@@ -365,7 +371,7 @@ struct MapView: View {
                 PlanVisitButton {
                     viewModel.showPlannerView()
                 }
-                .padding(.top, 50)
+                .padding(.top, 20) // Reducir padding ya que safeAreaInset empujará hacia abajo
                 .padding(.trailing, 20)
             }
             
@@ -399,6 +405,10 @@ struct MapView: View {
                 }
             }
         }
+        .safeAreaInset(edge: .top) {
+            // Espacio transparente en la parte superior para empujar el contenido hacia abajo
+            Color.clear.frame(height: 40)
+        }
         .sheet(isPresented: $viewModel.showPlanner) {
             VisitPlannerSheetView(
                 showRouteSheet: $viewModel.showRoute,
@@ -407,7 +417,7 @@ struct MapView: View {
             )
         }
         .onAppear {
-            viewModel.routeDisplayType = .fraction(0.55)
+            viewModel.routeDisplayType = .fraction(0.40)
         }
     }
 }
@@ -468,6 +478,9 @@ struct BottomSheetAdvanceView<Content: View>: View {
     var body: some View {
         GeometryReader { geometry in
             let screenHeight = geometry.size.height
+            let safeAreaBottom = geometry.safeAreaInsets.bottom
+            // Agregar padding extra para asegurar que esté por encima del tab bar
+            let tabBarOffset: CGFloat = 83 // Altura aproximada del tab bar + margen
             let minHeight = Constants.minHeight
             
             let totalHeight: CGFloat = {
@@ -482,9 +495,9 @@ struct BottomSheetAdvanceView<Content: View>: View {
             let offset: CGFloat = {
                 switch displayType {
                 case .fraction(let value):
-                    return screenHeight - (screenHeight * value)
+                    return screenHeight - (screenHeight * value) - tabBarOffset
                 case .minimized:
-                    return screenHeight - minHeight
+                    return screenHeight - minHeight - tabBarOffset
                 }
             }()
 
@@ -493,13 +506,14 @@ struct BottomSheetAdvanceView<Content: View>: View {
                     .padding(.vertical, 8)
                 
                 content
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: totalHeight - 24) // Restar espacio del indicator
                 
-                // Spacer extra para cubrir el área cuando se estira
-                Spacer(minLength: screenHeight)
+                // Spacer infinito para asegurar que siempre haya fondo visible
+                Spacer(minLength: 0)
+                    .frame(maxHeight: .infinity)
                     .background(Color(.secondarySystemBackground))
             }
-            .frame(width: geometry.size.width, height: totalHeight + screenHeight, alignment: .top)
+            .frame(width: geometry.size.width, height: max(totalHeight + tabBarOffset, screenHeight * 2), alignment: .top)
             .background(Color(.secondarySystemBackground))
             .clipShape(UnevenRoundedRectangle(topLeadingRadius: Constants.radius, topTrailingRadius: Constants.radius))
             .offset(y: offset + translation)
@@ -519,7 +533,7 @@ struct BottomSheetAdvanceView<Content: View>: View {
                         let velocity = value.predictedEndLocation.y - value.location.y
                         let translation = value.translation.height
                         if translation < -50 || velocity < -200 {
-                            displayType = .fraction(0.55)
+                            displayType = .fraction(0.35)
                         } else {
                             displayType = .minimized
                         }
@@ -527,7 +541,7 @@ struct BottomSheetAdvanceView<Content: View>: View {
             )
             .environment(\.displayType, $displayType)
         }
-        .edgesIgnoringSafeArea(.bottom)
+        .ignoresSafeArea(.all)
     }
 }
 
