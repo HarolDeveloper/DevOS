@@ -53,12 +53,6 @@ struct SettingsView: View {
                 }
             }
 
-            // MARK: Soporte
-            Section(header: Text("support".localized)) {
-                NavigationLink(destination: FeedbackView()) {
-                    SettingsRow(icon: "message", title: "feedback".localized)
-                }
-            }
 
             // MARK: Sesión
             Section(header: Text("session".localized)) {

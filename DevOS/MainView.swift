@@ -23,6 +23,7 @@ struct MainView: View {
         }
         .environmentObject(authViewModel)
     }
+
 }
 
 #Preview {

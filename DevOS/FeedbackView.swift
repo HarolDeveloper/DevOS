@@ -6,11 +6,17 @@
 //
 
 import SwiftUI
+import Supabase
 
 struct FeedbackView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var rating: Int = 0
     @State private var message: String = ""
+    @State private var isSending = false
+    @State private var showConfirmation = false
+    @State private var showError = false
+    @State private var errorMessage = ""
+    
     let maxCharacters = 500
 
     var body: some View {
@@ -70,17 +76,51 @@ struct FeedbackView: View {
 
                 // Botón de envío
                 Button(action: {
-                    // Enviar feedback
-                    print("Rating: \(rating), Message: \(message)")
+                    Task {
+                        isSending = true
+                        do {
+                            guard let userId = try await UserAccountService.shared.obtenerUsuarioId() else {
+                                throw NSError(domain: "Feedback", code: 401, userInfo: [NSLocalizedDescriptionKey: "No se encontró sesión del usuario."])
+                            }
+
+                            if let userId = try await UserAccountService.shared.obtenerUsuarioId() {
+                                try await ReviewService.shared.crearReview(
+                                    usuarioId: userId,
+                                    contenido: message,
+                                    calificacion: rating
+                                )
+                            } else {
+                                throw NSError(domain: "Usuario", code: 401, userInfo: [NSLocalizedDescriptionKey: "No hay sesión activa."])
+                            }
+
+
+                            showConfirmation = true
+                            message = ""
+                            rating = 0
+                        } catch {
+                            errorMessage = error.localizedDescription
+                            showError = true
+                        }
+                        isSending = false
+                    }
                 }) {
-                    Text("feedback_send".localized)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.orange)
-                        .cornerRadius(12)
+                    if isSending {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.orange.opacity(0.7))
+                            .cornerRadius(12)
+                    } else {
+                        Text("feedback_send".localized)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background((rating > 0 && !message.isEmpty) ? Color.orange : Color.gray)
+                            .cornerRadius(12)
+                    }
                 }
+                .disabled(rating == 0 || message.isEmpty)
 
                 Spacer()
             }
@@ -90,24 +130,13 @@ struct FeedbackView: View {
         .navigationTitle("feedback".localized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                        Text("back".localized)
-                    }
-                    .foregroundColor(.black)
-                }
-            }
+        .alert("¡Gracias por tu feedback!", isPresented: $showConfirmation) {
+            Button("Cerrar") { presentationMode.wrappedValue.dismiss() }
         }
-    }
-}
-
-#Preview {
-    NavigationView {
-        FeedbackView()
+        .alert("Error", isPresented: $showError) {
+            Button("Cerrar", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
+        }
     }
 }

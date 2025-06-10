@@ -4,6 +4,7 @@ struct HomeView: View {
     @State private var noticias: [Noticia] = []
     @State private var selectedNoticia: Noticia? = nil
     @State private var selectedSectionItem: DatabaseItem? = nil
+    @State private var feedbackUsuarioId: UUID? = nil
     @State private var scrollOffset: CGFloat = 0
     @State private var showFeedbackSheet = false
     @State private var isSearching: Bool = false
@@ -25,9 +26,11 @@ struct HomeView: View {
 
     let columns = [ GridItem(.flexible()), GridItem(.flexible()) ]
 
-        var body: some View {
-            NavigationStack {
-                ZStack(alignment: .top) {
+    var body: some View {
+            ZStack {
+                VStack(spacing: 0) {
+                    encabezadoView()
+
                     ScrollView {
                         GeometryReader { geometry in
                             Color.clear
@@ -41,7 +44,9 @@ struct HomeView: View {
                                     .frame(height: 150)
                             } else if !noticias.isEmpty {
                                 NoticiaCarouselView(noticias: noticias) { noticia in
-                                    selectedNoticia = noticia
+                                    withAnimation(.spring()) {
+                                        selectedNoticia = noticia
+                                    }
                                 }
                                 .padding(.horizontal)
                             }
@@ -52,13 +57,12 @@ struct HomeView: View {
                             feedbackButton()
                             Spacer()
                         }
-                        .padding(.top, 115)
+                        .padding(.top, 20)
                     }
                     .coordinateSpace(name: "scroll")
                     .onPreferenceChange(ScrollOffsetKey.self) { value in
                         scrollOffset = value
                     }
-                    .scrollIndicators(.hidden)
                     .onAppear {
                         Task {
                             do {
@@ -69,56 +73,107 @@ struct HomeView: View {
                             isLoadingNoticias = false
                         }
                     }
+                }
 
-                    VStack(spacing: 20) {
-                        HStack {
-                            Text("¡Bienvenido!")
-                                .fontWeight(.semibold)
-                                .font(.system(size: 24))
-                            Spacer()
-                            NavigationLink(destination: SettingsView()) {
-                                Image("Settings")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 32, height: 32)
+                // Overlays para popups
+                if let noticia = selectedNoticia {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                        .onTapGesture {
+                            withAnimation { selectedNoticia = nil }
+                        }
+
+                    NoticiaPopupView(noticia: noticia) {
+                        withAnimation { selectedNoticia = nil }
+                    }
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(2)
+                }
+
+                if let section = selectedSectionItem {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                        .onTapGesture {
+                            withAnimation { selectedSectionItem = nil }
+                        }
+
+                    SectionsPopupView(item: section) {
+                        withAnimation { selectedSectionItem = nil }
+                    }
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(1)
+                }
+            }
+            .animation(.spring(), value: selectedNoticia)
+            .animation(.spring(), value: selectedSectionItem)
+            .background(Color.white.ignoresSafeArea())
+            .navigationDestination(isPresented: $isSearching) {
+                SearchView(isPresented: $isSearching)
+            }
+            .sheet(isPresented: $showFeedbackSheet) {
+                if let userId = feedbackUsuarioId {
+                    FeedbackView()
+                } else {
+                    LoadingView()
+                        .task {
+                            do {
+                                if let id = try await UserAccountService.shared.obtenerUsuarioId() {
+                                    feedbackUsuarioId = id
+                                } else {
+                                    print("⚠️ No se encontró sesión activa.")
+                                    showFeedbackSheet = false
+                                }
+                            } catch {
+                                print("❌ Error al obtener sesión:", error)
+                                showFeedbackSheet = false
                             }
                         }
-                        .padding(.horizontal)
-
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                            Text("¿Qué estás buscando hoy?")
-                                .foregroundColor(.gray)
-                            Spacer()
-                        }
-                        .padding(12)
-                        .background(Color.white)
-                        .cornerRadius(20)
-                        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
-                        .padding(.horizontal)
-                        .onTapGesture {
-                            isSearching = true
-                        }
-                    }
-                    .padding(10)
-                    .background(Color.white)
-                    .zIndex(1)
-
-                    ZStack {
-                        noticiaOverlay()
-                        sectionOverlay()
-                    }
-                }
-                .animation(.spring(), value: selectedNoticia?.id)
-                .animation(.spring(), value: selectedSectionItem)
-                .background(Color.white.ignoresSafeArea(.all, edges: .top))
-                .navigationDestination(isPresented: $isSearching) {
-                    SearchView(isPresented: $isSearching)
                 }
             }
         }
 
+        // MARK: - Encabezado
+        @ViewBuilder
+        private func encabezadoView() -> some View {
+            VStack(spacing: 20) {
+                HStack {
+                    Text("¡Bienvenido!")
+                        .fontWeight(.semibold)
+                        .font(.system(size: 24))
+                    Spacer()
+                    NavigationLink(destination: SettingsView()) {
+                        Image("Settings")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 32, height: 32)
+                    }
+                }
+                .padding(.horizontal)
+
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    Text("¿Qué estás buscando hoy?")
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
+                .padding(12)
+                .background(Color.white)
+                .cornerRadius(20)
+                .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+                .padding(.horizontal)
+                .onTapGesture {
+                    isSearching = true
+                }
+            }
+            .padding(10)
+            .background(Color.white)
+            .zIndex(1)
+        }
+
+        // MARK: - Secciones
         @ViewBuilder
         private func sectionsGrid() -> some View {
             VStack(alignment: .leading, spacing: 12) {
@@ -130,18 +185,18 @@ struct HomeView: View {
                 LazyVGrid(columns: columns, spacing: 0) {
                     ForEach(databaseItems) { item in
                         SectionsItemView(item: item) {
-                            withAnimation {
-                                selectedSectionItem = item
-                            }
+                            withAnimation { selectedSectionItem = item }
                         }
                     }
                 }
             }
         }
 
+        // MARK: - Botón feedback
         @ViewBuilder
         private func feedbackButton() -> some View {
             Button(action: {
+                feedbackUsuarioId = nil
                 showFeedbackSheet = true
             }) {
                 Text("¿Tienes comentarios?")
@@ -153,43 +208,6 @@ struct HomeView: View {
                     .cornerRadius(30)
                     .padding(.horizontal)
             }
-            .sheet(isPresented: $showFeedbackSheet) {
-                FeedbackView()
-            }
-        }
-
-        @ViewBuilder
-        private func noticiaOverlay() -> some View {
-            if let noticia = selectedNoticia {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation { selectedNoticia = nil }
-                    }
-
-                NoticiaPopupView(noticia: noticia) {
-                    withAnimation { selectedNoticia = nil }
-                }
-                .transition(.scale.combined(with: .opacity))
-                .zIndex(2)
-            }
-        }
-
-        @ViewBuilder
-        private func sectionOverlay() -> some View {
-            if let section = selectedSectionItem {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation { selectedSectionItem = nil }
-                    }
-
-                SectionsPopupView(item: section) {
-                    withAnimation { selectedSectionItem = nil }
-                }
-                .transition(.scale.combined(with: .opacity))
-                .zIndex(1)
-            }
         }
 
         struct ScrollOffsetKey: PreferenceKey {
@@ -200,6 +218,8 @@ struct HomeView: View {
         }
     }
 
-    #Preview {
+#Preview {
+    NavigationStack {
         HomeView()
     }
+}

@@ -15,7 +15,11 @@ class UserAccountService: ObservableObject {
 
     private init() {}
 
-    /// Cambia la contraseña del usuario actualmente autenticado
+    func obtenerUsuarioId() async throws -> UUID? {
+        let session = try await client.auth.session
+        return session.user.id
+    }
+
     func cambiarContrasena(nueva: String) async throws {
         try await client.auth.update(user: UserAttributes(password: nueva))
     }

@@ -15,12 +15,12 @@
 		651EE5792DF18BF40078DF53 /* SectionsItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE5782DF18BF40078DF53 /* SectionsItem.swift */; };
 		651EE57B2DF18CB30078DF53 /* SectionsItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE57A2DF18CB30078DF53 /* SectionsItemView.swift */; };
 		651EE57D2DF22E410078DF53 /* UserAccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE57C2DF22E410078DF53 /* UserAccountService.swift */; };
-		651EE5812DF62D0E0078DF53 /* SupabaseCarouselItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE5802DF62D0E0078DF53 /* SupabaseCarouselItem.swift */; };
 		651EE5852DF67B6B0078DF53 /* Noticia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE5842DF67B6B0078DF53 /* Noticia.swift */; };
 		651EE5872DF67B940078DF53 /* NoticiaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE5862DF67B940078DF53 /* NoticiaService.swift */; };
 		651EE5892DF67C180078DF53 /* NoticiaCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE5882DF67C180078DF53 /* NoticiaCarouselView.swift */; };
 		651EE58B2DF67C960078DF53 /* NoticiaPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE58A2DF67C960078DF53 /* NoticiaPopupView.swift */; };
 		651EE58D2DF67E2A0078DF53 /* NoticiaCarouselItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE58C2DF67E2A0078DF53 /* NoticiaCarouselItemView.swift */; };
+		651EE58F2DF685FD0078DF53 /* ReviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651EE58E2DF685FD0078DF53 /* ReviewService.swift */; };
 		A08871832DCD7C6400E542FC /* ExperienceTitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08871822DCD7C6400E542FC /* ExperienceTitles.swift */; };
 		A229351B2DD55C4B0012FC6E /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A229351A2DD55C4B0012FC6E /* CameraViewModel.swift */; };
 		A22935242DD56FC10012FC6E /* MyWalletClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A22935232DD56FC10012FC6E /* MyWalletClassifier.mlmodel */; };
@@ -66,12 +66,12 @@
 		651EE5782DF18BF40078DF53 /* SectionsItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionsItem.swift; sourceTree = "<group>"; };
 		651EE57A2DF18CB30078DF53 /* SectionsItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionsItemView.swift; sourceTree = "<group>"; };
 		651EE57C2DF22E410078DF53 /* UserAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountService.swift; sourceTree = "<group>"; };
-		651EE5802DF62D0E0078DF53 /* SupabaseCarouselItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseCarouselItem.swift; sourceTree = "<group>"; };
 		651EE5842DF67B6B0078DF53 /* Noticia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Noticia.swift; sourceTree = "<group>"; };
 		651EE5862DF67B940078DF53 /* NoticiaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticiaService.swift; sourceTree = "<group>"; };
 		651EE5882DF67C180078DF53 /* NoticiaCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticiaCarouselView.swift; sourceTree = "<group>"; };
 		651EE58A2DF67C960078DF53 /* NoticiaPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticiaPopupView.swift; sourceTree = "<group>"; };
 		651EE58C2DF67E2A0078DF53 /* NoticiaCarouselItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticiaCarouselItemView.swift; sourceTree = "<group>"; };
+		651EE58E2DF685FD0078DF53 /* ReviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewService.swift; sourceTree = "<group>"; };
 		A08871822DCD7C6400E542FC /* ExperienceTitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceTitles.swift; sourceTree = "<group>"; };
 		A229351A2DD55C4B0012FC6E /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		A22935232DD56FC10012FC6E /* MyWalletClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MyWalletClassifier.mlmodel; sourceTree = "<group>"; };
@@ -186,7 +186,6 @@
 				A2F0A5582DBC293500D53638 /* Assets.xcassets */,
 				A2F0A55A2DBC293500D53638 /* Preview Content */,
 				A237A1212DC1747600B18607 /* MainView.swift */,
-				651EE5802DF62D0E0078DF53 /* SupabaseCarouselItem.swift */,
 				651EE5842DF67B6B0078DF53 /* Noticia.swift */,
 				651EE5862DF67B940078DF53 /* NoticiaService.swift */,
 				651EE5882DF67C180078DF53 /* NoticiaCarouselView.swift */,
@@ -200,6 +199,7 @@
 				A271A3522DD67D76005A4AB2 /* SearchView.swift */,
 				A271A3562DD67DAD005A4AB2 /* SettingsView.swift */,
 				651EE5532DE8FBB30078DF53 /* FeedbackView.swift */,
+				651EE58E2DF685FD0078DF53 /* ReviewService.swift */,
 				651EE5742DF12E780078DF53 /* SecurityView.swift */,
 				A22935252DD5701A0012FC6E /* ZonaClassifier.swift */,
 			);
@@ -299,6 +299,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EAB0B8BE2DC16AF200DF567B /* LoginView.swift in Sources */,
+				651EE58F2DF685FD0078DF53 /* ReviewService.swift in Sources */,
 				EA812F062DCDB53800EEFB6B /* ForgotPasswordView.swift in Sources */,
 				651EE58B2DF67C960078DF53 /* NoticiaPopupView.swift in Sources */,
 				A271A3512DD67D58005A4AB2 /* SectionsPopupView.swift in Sources */,
@@ -331,7 +332,6 @@
 				A2F0A5532DBC293400D53638 /* DevOSApp.swift in Sources */,
 				651EE5892DF67C180078DF53 /* NoticiaCarouselView.swift in Sources */,
 				A237A1252DC174B500B18607 /* AuthViewModel.swift in Sources */,
-				651EE5812DF62D0E0078DF53 /* SupabaseCarouselItem.swift in Sources */,
 				F693701C2DCD8093006494B6 /* OnboardingView.swift in Sources */,
 				A22935242DD56FC10012FC6E /* MyWalletClassifier.mlmodel in Sources */,
 				A271A3572DD67DAD005A4AB2 /* SettingsView.swift in Sources */,
