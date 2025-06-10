@@ -11,15 +11,17 @@ struct NavBarView: View {
     @State private var selectedTab: Tab = .home
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        VStack(spacing: 0) {
+            // Swipeable views
             TabView(selection: $selectedTab) {
                 NavigationStack { CameraView() }.tag(Tab.camera)
                 NavigationStack { HomeView() }.tag(Tab.home)
                 NavigationStack { MapView() }.tag(Tab.map)
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .ignoresSafeArea() // <- importante para fondo completo
+            .tabViewStyle(.page(indexDisplayMode: .never)) // si lo quieres
 
+
+            // Custom NavBar
             HStack {
                 Spacer()
                 Button {
@@ -68,7 +70,6 @@ struct NavBarView: View {
             .padding(.bottom, 20)
             .background(Color.black)
             .cornerRadius(20)
-   
         }
         .ignoresSafeArea()
     }
@@ -79,5 +80,3 @@ struct NavBarView_Previews: PreviewProvider {
         NavBarView()
     }
 }
-
-
