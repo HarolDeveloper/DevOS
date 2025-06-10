@@ -9,16 +9,33 @@ import SwiftUI
 
 struct SectionsItemView: View {
     let item: DatabaseItem
-    let onTap: () -> Void  // ✅ esto es lo nuevo
+    let onTap: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Image(item.imageName)
-                .resizable()
-                .aspectRatio(1.6, contentMode: .fill)
-                .frame(height: 100)
-                .clipped()
-                .cornerRadius(10)
+            AsyncImage(url: URL(string: item.imageName)) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(height: 100)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(1.6, contentMode: .fill)
+                        .frame(height: 100)
+                        .clipped()
+                        .cornerRadius(10)
+                case .failure:
+                    Image("placeholder_zona")
+                        .resizable()
+                        .aspectRatio(1.6, contentMode: .fill)
+                        .frame(height: 100)
+                        .clipped()
+                        .cornerRadius(10)
+                @unknown default:
+                    EmptyView()
+                }
+            }
 
             Text(item.title)
                 .font(.headline)
@@ -35,7 +52,7 @@ struct SectionsItemView: View {
         .background(Color.white)
         .cornerRadius(12)
         .onTapGesture {
-            onTap()  // ✅ ahora responde al toque
+            onTap()
         }
     }
 }

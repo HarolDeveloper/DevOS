@@ -60,16 +60,8 @@ struct HomeView: View {
                     .onPreferenceChange(ScrollOffsetKey.self) { value in
                         scrollOffset = value
                     }
-                    .onAppear {
-                        Task {
-                            do {
-                                noticias = try await NoticiaService.shared.obtenerNoticias()
-                            } catch {
-                                print("❌ Error al obtener noticias:", error)
-                            }
-                            isLoadingNoticias = false
-                        }
-                    }
+     
+
                 }
 
                 // Overlays para popups
@@ -121,9 +113,26 @@ struct HomeView: View {
                             }
                         }
                 }
+            }.onAppear {
+                Task {
+                    do {
+                        noticias = try await NoticiaService.shared.obtenerNoticias()
+                    } catch {
+                        print("❌ Error al obtener noticias:", error)
+                    }
+                    isLoadingNoticias = false
+
+                    do {
+                        zonas = try await ZonaService.shared.obtenerTodasZonas()
+                    } catch {
+                        print("❌ Error al obtener zonas:", error)
+                    }
+                    isLoadingZonas = false
+                }
             }
 
         }
+    
 
         // MARK: - Encabezado
         @ViewBuilder
