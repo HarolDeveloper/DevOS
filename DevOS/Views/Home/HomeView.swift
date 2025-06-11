@@ -139,7 +139,7 @@ struct HomeView: View {
         private func encabezadoView() -> some View {
             VStack(spacing: 20) {
                 HStack {
-                    Text("¡Bienvenido!")
+                    Text("welcome_title".localized)
                         .fontWeight(.semibold)
                         .font(.system(size: 24))
                     Spacer()
@@ -155,7 +155,7 @@ struct HomeView: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
-                    Text("¿Qué estás buscando hoy?")
+                    Text("search_placeholder".localized)
                         .foregroundColor(.gray)
                     Spacer()
                 }
@@ -177,13 +177,13 @@ struct HomeView: View {
     @ViewBuilder
     private func sectionsGrid() -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Secciones")
+            Text("sections_title".localized)
                 .fontWeight(.semibold)
                 .font(.system(size: 24))
                 .padding(.horizontal)
 
             if isLoadingZonas {
-                ProgressView("Cargando zonas...")
+                ProgressView("loading_sections".localized)
                     .frame(height: 150)
             } else if !zonas.isEmpty {
                 LazyVGrid(columns: columns, spacing: 0) {
@@ -214,7 +214,7 @@ struct HomeView: View {
                 feedbackUsuarioId = nil
                 showFeedbackSheet = true
             }) {
-                Text("¿Tienes comentarios?")
+                Text("feedback_button".localized)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)

@@ -11,7 +11,12 @@ import UIKit
 
 class OpenAIService {
     static let shared = OpenAIService()
-    private let apiKey = "sk-gvC8GPZ4YMZYI9MvRkqWo_Ca83QpgxmJcs4DcHP24KT3BlbkFJ48iHsgkq_KHXo6YN_Ed6rjREmu8DQXgyeNJjEN9asA"
+    private let apiKey: String = {
+        guard let key = Bundle.main.object(forInfoDictionaryKey: "OPENAI_API_KEY") as? String else {
+            fatalError("OPENAI_API_KEY not found in Info.plist")
+        }
+        return key
+    }()
 
     func generarExplicacionConTextoYImagen(zona: String, descripcion: String, imagen: UIImage, completion: @escaping (String?) -> Void) {
         guard let imageData = imagen.jpegData(compressionQuality: 0.7)?.base64EncodedString() else {

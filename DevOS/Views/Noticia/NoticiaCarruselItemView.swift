@@ -30,14 +30,6 @@ struct NoticiaCarouselItemView: View {
                     .cornerRadius(15)
                     .shadow(radius: 5)
             }
-
-            Text(noticia.titulo ?? "Sin título")
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.orange.opacity(0.6))
-                .cornerRadius(10)
-                .padding([.leading, .bottom], 10)
         }
     }
 }
