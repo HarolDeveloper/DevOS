@@ -61,12 +61,12 @@ struct LoginView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 250)
-                .padding(.top, 70)
+                .padding(.top, 260)
             
             // Contenedor del formulario
             VStack(spacing: 0) {
                 Spacer()
-                    .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.343 : UIScreen.main.bounds.height * 0.31)
+                    .frame(height: isShowingRegister ? UIScreen.main.bounds.height * 0.53 : UIScreen.main.bounds.height * 0.52)
                 
                 // Tarjeta blanca con formulario
                 VStack(alignment: .leading, spacing: isShowingRegister ? 16 : 20) {
@@ -321,49 +321,14 @@ struct LoginView: View {
                         }
                     }
                     .padding(.top, 10)
-                    
-                    HStack {
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(.gray.opacity(0.5))
-                        
-                        Circle()
-                            .strokeBorder(Color.gray.opacity(0.5), lineWidth: 1)
-                            .background(Circle().fill(.white))
-                            .frame(width: 16, height: 16)
-                        
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(.gray.opacity(0.5))
-                    }
-                    .padding()
-                    
-                    // Sign In with Apple
-                    Button(action: {
-                        // Lógica de inicio de sesión con Apple
-                    }) {
-                        HStack {
-                            Image(systemName: "apple.logo")
-                                .font(.system(size: 18))
-                                .padding(.trailing, 8)
-                            
-                            Text(isShowingRegister ? "Register with Apple" : "Sign In with Apple")
-                                .font(.system(size: 16, weight: .medium))
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .cornerRadius(24)
-                    }
+                    Spacer()
                 }
                 .padding(24)
                 .background(Color.white)
                 .cornerRadius(20, corners: [.topLeft, .topRight])
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: -5)
                 .animation(.easeInOut(duration: 0.5), value: isShowingRegister)
-                .frame(height: isShowingRegister ? 470 : 550)
-                
+                .frame(height: isShowingRegister ? 550 : 550)
             }
         }
     }

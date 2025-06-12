@@ -169,7 +169,8 @@ struct HomeView: View {
                     isSearching = true
                 }
             }
-            .padding(10)
+            .padding()
+            .padding(.top, 45)
             .background(Color.white)
             .zIndex(1)
         }

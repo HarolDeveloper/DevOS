@@ -70,7 +70,7 @@ struct NavBarView: View {
             .background(Color.black)
             .cornerRadius(20)
         }
-        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.all)
     }
 }
 
