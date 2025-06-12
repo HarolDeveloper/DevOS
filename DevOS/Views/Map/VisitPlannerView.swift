@@ -120,42 +120,131 @@ struct VisitPlannerView: View {
     private var isMonday: Bool {
         Calendar.current.component(.weekday, from: selectedDate) == 2
     }
+    
+    // MARK: - Funciones para obtener horarios del museo
+    private func getMuseumHours(for date: Date) -> (openHour: Int, closeHour: Int) {
+        let weekday = Calendar.current.component(.weekday, from: date)
+        
+        if (3...5).contains(weekday) { // Martes a Jueves
+            return (openHour: 11, closeHour: 18) // 11 AM - 6 PM
+        } else if weekday == 6 || weekday == 7 || weekday == 1 { // Viernes, Sábado, Domingo
+            return (openHour: 12, closeHour: 19) // 12 PM - 7 PM
+        } else {
+            return (openHour: 0, closeHour: 0) // Lunes cerrado
+        }
+    }
+    
+    private var selectedDurationInMinutes: Int {
+        if selectedDuration == "Otro" {
+            return customHours * 60 + customMinutes
+        } else {
+            switch selectedDuration {
+            case "30 min": return 30
+            case "1 hora": return 60
+            case "2 horas": return 120
+            case "3 horas": return 180
+            case "4 horas": return 240
+            case "5 horas": return 300
+            default: return 0
+            }
+        }
+    }
 
     private var validHourRange: ClosedRange<Date> {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month, .day], from: selectedDate)
-
-        var start = DateComponents()
-        var end = DateComponents()
-        start.year = components.year
-        start.month = components.month
-        start.day = components.day
-        end = start
-
-        let weekday = calendar.component(.weekday, from: selectedDate)
-        if (3...5).contains(weekday) {
-            start.hour = 11
-            end.hour = 18
-        } else if weekday == 6 || weekday == 7 || weekday == 1 {
-            start.hour = 12
-            end.hour = 19
-        } else {
-            start.hour = 0
-            end.hour = 0
+        let museumHours = getMuseumHours(for: selectedDate)
+        
+        // Hora de apertura
+        var startComponents = components
+        startComponents.hour = museumHours.openHour
+        startComponents.minute = 0
+        
+        // Hora límite considerando la duración de la visita
+        let durationInMinutes = selectedDurationInMinutes
+        let latestStartHour = museumHours.closeHour
+        let latestStartMinutes = durationInMinutes
+        
+        // Calcular la hora más tarde que se puede empezar
+        let totalCloseMinutes = latestStartHour * 60
+        let latestStartInMinutes = totalCloseMinutes - latestStartMinutes
+        
+        let finalHour = max(museumHours.openHour, latestStartInMinutes / 60)
+        let finalMinute = latestStartInMinutes % 60
+        
+        var endComponents = components
+        endComponents.hour = finalHour
+        endComponents.minute = finalMinute
+        
+        // Si la hora de cierre calculada es antes de la apertura, usar la apertura
+        if finalHour < museumHours.openHour || (finalHour == museumHours.openHour && finalMinute < 0) {
+            endComponents.hour = museumHours.openHour
+            endComponents.minute = 0
         }
-
-        return calendar.date(from: start)!...calendar.date(from: end)!
+        
+        let startDate = calendar.date(from: startComponents)!
+        let endDate = calendar.date(from: endComponents)!
+        
+        // Asegurar que el rango sea válido
+        if startDate >= endDate {
+            // Si no hay tiempo suficiente, el rango será muy pequeño
+            var limitedEnd = startComponents
+            limitedEnd.minute = 30 // Al menos 30 minutos de diferencia
+            return startDate...calendar.date(from: limitedEnd)!
+        }
+        
+        return startDate...endDate
+    }
+    
+    // MARK: - Validaciones
+    private var hasEnoughTimeForVisit: Bool {
+        let museumHours = getMuseumHours(for: selectedDate)
+        let durationInMinutes = selectedDurationInMinutes
+        let totalMuseumTime = (museumHours.closeHour - museumHours.openHour) * 60
+        
+        return durationInMinutes <= totalMuseumTime && durationInMinutes > 0
+    }
+    
+    private var timeConflictMessage: String? {
+        guard selectedDuration != nil && !hasEnoughTimeForVisit else { return nil }
+        
+        let museumHours = getMuseumHours(for: selectedDate)
+        let totalHours = museumHours.closeHour - museumHours.openHour
+        
+        if selectedDurationInMinutes > totalHours * 60 {
+            return "La duración seleccionada (\(formatDuration(selectedDurationInMinutes))) excede el horario del museo (\(totalHours) horas disponibles)."
+        }
+        
+        return nil
+    }
+    
+    private func formatDuration(_ minutes: Int) -> String {
+        let hours = minutes / 60
+        let mins = minutes % 60
+        
+        if hours > 0 && mins > 0 {
+            return "\(hours)h \(mins)min"
+        } else if hours > 0 {
+            return "\(hours)h"
+        } else {
+            return "\(mins)min"
+        }
     }
 
     private var customDurationValid: Bool {
         if selectedDuration == "Otro" {
-            return customHours > 0 || customMinutes > 0
+            let totalMinutes = customHours * 60 + customMinutes
+            return totalMinutes >= 15 && totalMinutes <= 390 // Entre 15 min y 6h 30min
         }
         return true
     }
 
     private var canContinue: Bool {
-        !isMonday && selectedDuration != nil && customDurationValid && !isLoading
+        !isMonday &&
+        selectedDuration != nil &&
+        customDurationValid &&
+        hasEnoughTimeForVisit &&
+        !isLoading
     }
     
     // MARK: - Función para crear y guardar la visita
@@ -164,19 +253,41 @@ struct VisitPlannerView: View {
         
         do {
             // Calcular tiempo en minutos
-            var tiempo: Int = 0
+            let tiempo = selectedDurationInMinutes
             
+            // *** DEBUGGING: Imprimir valores antes de cualquier validación ***
+            print("🔍 DEBUG - Valores iniciales:")
+            print("   selectedDuration: \(selectedDuration ?? "nil")")
+            print("   customHours: \(customHours)")
+            print("   customMinutes: \(customMinutes)")
+            print("   tiempo calculado: \(tiempo) minutos")
+            
+            // Validar que el tiempo sea válido ANTES de proceder
+            guard tiempo > 0 else {
+                throw NSError(domain: "VisitaError", code: 1006, userInfo: [NSLocalizedDescriptionKey: "El tiempo de visita debe ser mayor a 0 minutos. Valor actual: \(tiempo)"])
+            }
+            
+            // Validar límites razonables
+            guard tiempo >= 15 else {
+                throw NSError(domain: "VisitaError", code: 1007, userInfo: [NSLocalizedDescriptionKey: "El tiempo mínimo de visita es 15 minutos. Valor seleccionado: \(tiempo)"])
+            }
+            
+            // Límite máximo práctico (6.5 horas = 390 minutos)
+            guard tiempo <= 390 else {
+                throw NSError(domain: "VisitaError", code: 1008, userInfo: [NSLocalizedDescriptionKey: "El tiempo máximo de visita es 6 horas y 30 minutos. Valor seleccionado: \(formatDuration(tiempo))"])
+            }
+            
+            // Formatear el tiempo estimado correctamente
             if selectedDuration == "Otro" {
-                tiempo = customHours * 60 + customMinutes
-                estimatedTime = "\(customHours) h \(customMinutes) min"
-            } else {
-                switch selectedDuration {
-                case "30 min": tiempo = 30
-                case "1 hora": tiempo = 60
-                case "2 horas": tiempo = 120
-                case "3 horas": tiempo = 180
-                default: tiempo = 30
+                // Formatear según las horas y minutos
+                if customHours > 0 && customMinutes > 0 {
+                    estimatedTime = "\(customHours) hora\(customHours == 1 ? "" : "s") \(customMinutes) min"
+                } else if customHours > 0 {
+                    estimatedTime = "\(customHours) hora\(customHours == 1 ? "" : "s")"
+                } else {
+                    estimatedTime = "\(customMinutes) min"
                 }
+            } else {
                 estimatedTime = selectedDuration ?? "30 min"
             }
             
@@ -193,6 +304,11 @@ struct VisitPlannerView: View {
             let weekday = calendar.component(.weekday, from: selectedDate)
             guard weekday != 2 else { // 2 = lunes
                 throw NSError(domain: "VisitaError", code: 1002, userInfo: [NSLocalizedDescriptionKey: "Los lunes el museo está cerrado"])
+            }
+            
+            // Verificar que haya tiempo suficiente
+            guard hasEnoughTimeForVisit else {
+                throw NSError(domain: "VisitaError", code: 1004, userInfo: [NSLocalizedDescriptionKey: timeConflictMessage ?? "No hay tiempo suficiente para completar la visita"])
             }
             
             // Convertir el día de la semana a español según el constraint de la DB
@@ -214,6 +330,16 @@ struct VisitPlannerView: View {
             let timeComponents = calendar.dateComponents([.hour, .minute], from: selectedTime)
             let horaInicio = String(format: "%02d:%02d:00", timeComponents.hour ?? 0, timeComponents.minute ?? 0)
             
+            // Validar que la visita termine antes del cierre
+            let startMinutes = (timeComponents.hour ?? 0) * 60 + (timeComponents.minute ?? 0)
+            let endMinutes = startMinutes + tiempo
+            let museumHours = getMuseumHours(for: selectedDate)
+            let closeMinutes = museumHours.closeHour * 60
+            
+            guard endMinutes <= closeMinutes else {
+                throw NSError(domain: "VisitaError", code: 1005, userInfo: [NSLocalizedDescriptionKey: "La visita terminaría después del horario de cierre del museo"])
+            }
+            
             // Debug: Imprimir valores antes de enviar
             print("📅 Fecha original: \(selectedDate)")
             print("📅 Día de la semana (número): \(weekday)")
@@ -222,21 +348,14 @@ struct VisitPlannerView: View {
             print("🕐 Componentes de tiempo: hora=\(timeComponents.hour ?? 0), minuto=\(timeComponents.minute ?? 0)")
             print("🕐 Hora inicio formateada: \(horaInicio)")
             print("⏱️ Tiempo disponible: \(tiempo) minutos")
-            
-            // Verificar que la fecha formateada sea válida
-            print("🔍 Verificaciones:")
-            print("   Fecha hoy: \(today)")
-            print("   Fecha visita: \(visitDate)")
-            print("   ¿Fecha válida? \(visitDate >= today)")
-            print("   ¿No es lunes? \(weekday != 2)")
-            print("   ¿Tiempo válido? \(tiempo > 0)")
-            print("   ¿Día válido para constraint? \(diaVisita != "lunes")")
+            print("🏛️ Horario museo: \(museumHours.openHour):00 - \(museumHours.closeHour):00")
+            print("✅ Hora fin visita: \(endMinutes / 60):\(String(format: "%02d", endMinutes % 60))")
             
             // Crear objeto para la base de datos
             let visitaDB = VisitaDB(
                 id: UUID(),
                 usuario_id: usuarioId,
-                dia_visita: diaVisita, // Ahora enviamos el nombre del día en español
+                dia_visita: diaVisita,
                 hora_inicio_visita: horaInicio,
                 tiempo_disponible: tiempo
             )
@@ -280,11 +399,11 @@ struct VisitPlannerView: View {
                 // Date Selection
                 dateSelectionSection
                 
+                // Duration Selection (movido antes de time para que la validación funcione)
+                durationSelectionSection
+                
                 // Time Selection
                 timeSelectionSection
-                
-                // Duration Selection
-                durationSelectionSection
                 
                 // Continue Button
                 continueButton
@@ -306,6 +425,37 @@ struct VisitPlannerView: View {
             Button("OK") { }
         } message: {
             Text(errorMessage)
+        }
+        .onChange(of: selectedDuration) { _, _ in
+            // Ajustar la hora si ya no es válida con la nueva duración
+            let currentRange = validHourRange
+            if selectedTime < currentRange.lowerBound {
+                selectedTime = currentRange.lowerBound
+            } else if selectedTime > currentRange.upperBound {
+                selectedTime = currentRange.upperBound
+            }
+        }
+        .onChange(of: customHours) { _, _ in
+            // Ajustar la hora cuando cambie la duración personalizada
+            if selectedDuration == "Otro" {
+                let currentRange = validHourRange
+                if selectedTime < currentRange.lowerBound {
+                    selectedTime = currentRange.lowerBound
+                } else if selectedTime > currentRange.upperBound {
+                    selectedTime = currentRange.upperBound
+                }
+            }
+        }
+        .onChange(of: customMinutes) { _, _ in
+            // Ajustar la hora cuando cambie la duración personalizada
+            if selectedDuration == "Otro" {
+                let currentRange = validHourRange
+                if selectedTime < currentRange.lowerBound {
+                    selectedTime = currentRange.lowerBound
+                } else if selectedTime > currentRange.upperBound {
+                    selectedTime = currentRange.upperBound
+                }
+            }
         }
     }
     
@@ -376,6 +526,20 @@ struct VisitPlannerView: View {
                     
                     Spacer()
                     
+                    // Mostrar horarios del museo
+                    if !isMonday {
+                        let hours = getMuseumHours(for: selectedDate)
+                        Text("\(hours.openHour):00 - \(hours.closeHour):00")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(.ultraThinMaterial)
+                            )
+                    }
+                    
                     Image(systemName: showingDatePicker ? "chevron.up" : "chevron.down")
                         .foregroundColor(.secondary)
                         .rotationEffect(.degrees(showingDatePicker ? 180 : 0))
@@ -423,55 +587,86 @@ struct VisitPlannerView: View {
                 color: .green
             )
             
-            Button(action: {
-                withAnimation(.spring(response: 0.4)) {
-                    showingTimePicker.toggle()
+            if selectedDuration == nil {
+                alertMessage(
+                    text: "Primero selecciona la duración de tu visita para ver los horarios disponibles.",
+                    icon: "info.circle.fill",
+                    color: .blue
+                )
+            } else {
+                Button(action: {
+                    withAnimation(.spring(response: 0.4)) {
+                        showingTimePicker.toggle()
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "clock")
+                            .foregroundColor(.green)
+                            .font(.title3)
+                        
+                        Text(selectedTime.formatted(date: .omitted, time: .shortened))
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        Spacer()
+                        
+                        // Mostrar hora estimada de finalización
+                        if selectedDurationInMinutes > 0 {
+                            let endTime = Calendar.current.date(byAdding: .minute, value: selectedDurationInMinutes, to: selectedTime)!
+                            Text("Fin: \(endTime.formatted(date: .omitted, time: .shortened))")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(.ultraThinMaterial)
+                                )
+                        }
+                        
+                        Image(systemName: showingTimePicker ? "chevron.up" : "chevron.down")
+                            .foregroundColor(.secondary)
+                            .rotationEffect(.degrees(showingTimePicker ? 180 : 0))
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.ultraThinMaterial)
+                            .stroke(LinearGradient(
+                                colors: [.green.opacity(0.3), .green.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ), lineWidth: 1)
+                    )
                 }
-            }) {
-                HStack {
-                    Image(systemName: "clock")
-                        .foregroundColor(.green)
-                        .font(.title3)
-                    
-                    Text(selectedTime.formatted(date: .omitted, time: .shortened))
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                    
-                    Image(systemName: showingTimePicker ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.secondary)
-                        .rotationEffect(.degrees(showingTimePicker ? 180 : 0))
+                
+                if showingTimePicker {
+                    DatePicker(
+                        "Hora",
+                        selection: $selectedTime,
+                        in: validHourRange,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.ultraThinMaterial)
+                    )
+                    .transition(.asymmetric(
+                        insertion: .scale.combined(with: .opacity),
+                        removal: .scale.combined(with: .opacity)
+                    ))
                 }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                        .stroke(LinearGradient(
-                            colors: [.green.opacity(0.3), .green.opacity(0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ), lineWidth: 1)
-                )
-            }
-            
-            if showingTimePicker {
-                DatePicker(
-                    "Hora",
-                    selection: $selectedTime,
-                    in: validHourRange,
-                    displayedComponents: .hourAndMinute
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                )
-                .transition(.asymmetric(
-                    insertion: .scale.combined(with: .opacity),
-                    removal: .scale.combined(with: .opacity)
-                ))
+                
+                // Mostrar mensaje de conflicto si existe
+                if let conflictMessage = timeConflictMessage {
+                    alertMessage(
+                        text: conflictMessage,
+                        icon: "exclamationmark.triangle.fill",
+                        color: .orange
+                    )
+                }
             }
         }
     }
@@ -484,7 +679,7 @@ struct VisitPlannerView: View {
                 color: .purple
             )
             
-            let durationOptions = ["30 min", "1 hora", "2 horas", "3 horas", "Otro"]
+            let durationOptions = ["30 min", "1 hora", "2 horas", "3 horas", "4 horas", "5 horas", "Otro"]
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
                 ForEach(durationOptions, id: \.self) { option in
                     durationButton(option: option)
@@ -497,6 +692,24 @@ struct VisitPlannerView: View {
                         insertion: .scale.combined(with: .opacity),
                         removal: .scale.combined(with: .opacity)
                     ))
+                
+                // Mostrar validación de duración personalizada
+                if !customDurationValid {
+                    let currentDuration = selectedDurationInMinutes
+                    if currentDuration < 15 {
+                        alertMessage(
+                            text: "Selecciona al menos 15 minutos de duración.",
+                            icon: "exclamationmark.triangle.fill",
+                            color: .orange
+                        )
+                    } else if currentDuration > 390 {
+                        alertMessage(
+                            text: "El tiempo máximo es 6 horas y 30 minutos. Tiempo actual: \(formatDuration(currentDuration)).",
+                            icon: "exclamationmark.triangle.fill",
+                            color: .orange
+                        )
+                    }
+                }
             }
         }
     }
@@ -505,6 +718,11 @@ struct VisitPlannerView: View {
         Button(action: {
             withAnimation(.spring(response: 0.3)) {
                 selectedDuration = option
+                
+                // Si selecciona "Otro" y no hay valores válidos, establecer por defecto
+                if option == "Otro" && customHours == 0 && customMinutes == 0 {
+                    customMinutes = 30 // Valor por defecto de 30 minutos
+                }
             }
         }) {
             Text(option)
@@ -543,7 +761,7 @@ struct VisitPlannerView: View {
                         .foregroundColor(.secondary)
                     
                     Picker("Horas", selection: $customHours) {
-                        ForEach(0..<10) { hour in
+                        ForEach(0..<7) { hour in // Hasta 6 horas (para permitir 6h 30min)
                             Text("\(hour)")
                                 .font(.title2)
                                 .fontWeight(.semibold)
@@ -576,6 +794,12 @@ struct VisitPlannerView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
                     )
+                    .onAppear {
+                        // Si no hay horas seleccionadas, asegurar que haya al menos 15 minutos
+                        if customHours == 0 && customMinutes == 0 {
+                            customMinutes = 30
+                        }
+                    }
                 }
             }
             .padding()
