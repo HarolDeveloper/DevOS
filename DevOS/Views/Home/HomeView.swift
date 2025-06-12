@@ -19,6 +19,7 @@ struct HomeView: View {
     
     @State private var zonas: [Zona] = []
     @State private var isLoadingZonas = true
+    @State private var showSettingsSheet = false
 
 
     let columns = [ GridItem(.flexible()), GridItem(.flexible()) ]

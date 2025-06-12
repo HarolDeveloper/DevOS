@@ -1,10 +1,3 @@
-//
-//  MainView.swift
-//  DevOS
-//
-//  Created by H Lancheros Alvarez on 29/04/25.
-//
-
 import SwiftUI
 
 struct MainView: View {
@@ -17,7 +10,10 @@ struct MainView: View {
                 LoadingView()
             } else if authViewModel.isLoggedIn {
                 if authViewModel.hasCompletedOnboarding {
-                    NavBarView()
+                    // Aquí envolvemos NavBarView en NavigationStack
+                    NavigationStack {
+                        NavBarView()
+                    }
                 } else {
                     OnboardingFlowView()
                 }

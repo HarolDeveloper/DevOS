@@ -12,14 +12,13 @@ struct NavBarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Swipeable views
+            // Swipeable views - SIN NavigationStack aquí
             TabView(selection: $selectedTab) {
-                NavigationStack { CameraView() }.tag(Tab.camera)
-                NavigationStack { HomeView() }.tag(Tab.home)
-                NavigationStack { MapView() }.tag(Tab.map)
+                CameraView().tag(Tab.camera)
+                HomeView().tag(Tab.home)  // Sin NavigationStack
+                MapView().tag(Tab.map)
             }
-            .tabViewStyle(.page(indexDisplayMode: .never)) // si lo quieres
-
+            .tabViewStyle(.page(indexDisplayMode: .never))
 
             // Custom NavBar
             HStack {
@@ -72,7 +71,6 @@ struct NavBarView: View {
             .cornerRadius(20)
         }
         .edgesIgnoringSafeArea(.bottom)
-        
     }
 }
 
