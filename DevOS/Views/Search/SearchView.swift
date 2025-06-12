@@ -101,7 +101,7 @@ struct SearchView: View {
                 SectionsPopupView(item: DatabaseItem(
                     imageName: zona.imageURL!,
                     title: zona.nombre,
-                    description: zona.descripcion,
+                    description: zona.descripcion
                 )) {
                     selectedZona = nil
                 }
